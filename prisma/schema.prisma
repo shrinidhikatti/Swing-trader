@@ -1,0 +1,54 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model TradingCall {
+  id              String   @id @default(uuid())
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  callDate        DateTime
+
+  // Stock details
+  scriptName      String
+  ltp             Float
+
+  // Targets
+  target1         Float
+  target2         Float
+  target3         Float
+  stopLoss        Float
+
+  // Additional info
+  patternType     String   // TR, UB, BF, etc.
+  longTermOutlook String?
+  rank            Int?
+  support         Float?
+  resistance      Float?
+
+  // Status tracking
+  status          String   @default("ACTIVE") // ACTIVE, TARGET1_HIT, TARGET2_HIT, TARGET3_HIT, SL_HIT
+  currentPrice    Float?
+  lastChecked     DateTime?
+
+  // Result details
+  target1Hit      Boolean  @default(false)
+  target2Hit      Boolean  @default(false)
+  target3Hit      Boolean  @default(false)
+  stopLossHit     Boolean  @default(false)
+  hitDate         DateTime?
+
+  @@index([callDate])
+  @@index([status])
+}
+
+model AppConfig {
+  id              String   @id @default(uuid())
+  key             String   @unique
+  value           String
+  updatedAt       DateTime @updatedAt
+}
