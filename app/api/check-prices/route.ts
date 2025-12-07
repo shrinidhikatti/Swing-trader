@@ -1,13 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { fetchStockPrice } from '@/lib/stockApi'
+import { isAuthenticatedFromRequest } from '@/lib/auth'
 
 /**
- * API endpoint to check and update prices for active trading calls
+ * API endpoint to check and update prices for active trading calls (ADMIN ONLY)
  * This can be called manually or via cron job
  */
 export async function POST(request: NextRequest) {
   try {
+    // Check authentication
+    const isAdmin = await isAuthenticatedFromRequest(request)
+    if (!isAdmin) {
+      return NextResponse.json(
+        { error: 'Unauthorized - Admin access required' },
+        { status: 401 }
+      )
+    }
+
     // Fetch all active calls (not yet hit targets or stop loss)
     const activeCalls = await prisma.tradingCall.findMany({
       where: {
@@ -108,7 +118,7 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// GET - Get last check status
+// GET - Get last check status (PUBLIC)
 export async function GET() {
   try {
     const lastChecked = await prisma.tradingCall.findFirst({

@@ -38,10 +38,23 @@ A comprehensive web application for managing and tracking stock trading calls fo
   - Stop loss hit
 - Beautiful, responsive UI with Tailwind CSS
 
+### 5. Admin Authentication & Access Control
+- **Public Access**: Anyone can view trading calls (read-only)
+- **Admin Access**: Login required for:
+  - Adding new trading calls
+  - Deleting calls
+  - Checking prices manually
+- Session-based authentication with secure JWT tokens
+- Default credentials:
+  - Username: `admin`
+  - Password: `SwingTrader@2024`
+- Easy to customize via environment variables
+
 ## Tech Stack
 
 - **Frontend**: Next.js 14 (React)
 - **Backend**: Next.js API Routes
+- **Authentication**: JWT with jose library
 - **Database**: SQLite with Prisma ORM
 - **Styling**: Tailwind CSS
 - **Stock API**: Yahoo Finance API
@@ -78,7 +91,14 @@ A comprehensive web application for managing and tracking stock trading calls fo
    ```env
    DATABASE_URL="file:./dev.db"
    CHECK_INTERVAL_HOURS=5
+
+   # Admin Authentication
+   ADMIN_USERNAME="admin"
+   ADMIN_PASSWORD="SwingTrader@2024"
+   SESSION_SECRET="your-secret-key-change-this-in-production"
    ```
+
+   **IMPORTANT**: Change the admin password and session secret in production!
 
 5. **Run the development server**
    ```bash
@@ -91,9 +111,22 @@ A comprehensive web application for managing and tracking stock trading calls fo
 
 ## Usage
 
-### Adding a Trading Call
+### Admin Login
 
-1. Click the "Add New Trading Call" button
+To access admin features (add, edit, delete calls, check prices):
+
+1. Click the "Admin Login" button in the top-right corner
+2. Enter credentials:
+   - Username: `admin`
+   - Password: `SwingTrader@2024`
+3. After login, you'll see your admin status in the header
+
+**Public users** can view all trading calls without logging in (read-only access).
+
+### Adding a Trading Call (Admin Only)
+
+1. Login as admin first
+2. Click the "Add New Trading Call" button
 2. Fill in all required fields:
    - Script Name (e.g., RELIANCE, TCS, INFY)
    - Call Date
@@ -107,9 +140,10 @@ A comprehensive web application for managing and tracking stock trading calls fo
    - Long-term outlook
 4. Click "Create Call"
 
-### Checking Prices Manually
+### Checking Prices Manually (Admin Only)
 
-Click the "Check Prices Now" button in the top control panel to manually trigger a price check for all active calls.
+1. Login as admin
+2. Click the "Check Prices Now" button in the top control panel to manually trigger a price check for all active calls.
 
 ### Filtering Calls
 

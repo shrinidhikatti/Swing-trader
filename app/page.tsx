@@ -1,9 +1,10 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import CallCard from '@/components/CallCard'
 import CallEntryForm from '@/components/CallEntryForm'
-import { Calendar, RefreshCw, Settings, TrendingUp } from 'lucide-react'
+import { Calendar, RefreshCw, Settings, TrendingUp, LogIn, LogOut, Shield } from 'lucide-react'
 
 interface TradingCall {
   id: string
@@ -29,17 +30,32 @@ interface TradingCall {
 }
 
 export default function Home() {
+  const router = useRouter()
   const [calls, setCalls] = useState<TradingCall[]>([])
   const [loading, setLoading] = useState(true)
   const [checking, setChecking] = useState(false)
   const [selectedDate, setSelectedDate] = useState<string>('')
   const [filterStatus, setFilterStatus] = useState<string>('all')
   const [lastChecked, setLastChecked] = useState<string | null>(null)
+  const [isAdmin, setIsAdmin] = useState(false)
+  const [username, setUsername] = useState<string | null>(null)
 
   useEffect(() => {
+    checkAuth()
     fetchCalls()
     fetchLastChecked()
   }, [selectedDate, filterStatus])
+
+  const checkAuth = async () => {
+    try {
+      const response = await fetch('/api/auth/me')
+      const data = await response.json()
+      setIsAdmin(data.authenticated)
+      setUsername(data.user?.username || null)
+    } catch (error) {
+      console.error('Error checking auth:', error)
+    }
+  }
 
   const fetchCalls = async () => {
     try {
@@ -83,11 +99,23 @@ export default function Home() {
   }
 
   const handleCheckPrices = async () => {
+    if (!isAdmin) {
+      alert('Please login as admin to check prices')
+      return
+    }
+
     try {
       setChecking(true)
       const response = await fetch('/api/check-prices', {
         method: 'POST',
       })
+
+      if (response.status === 401) {
+        alert('Session expired. Please login again.')
+        router.push('/login')
+        return
+      }
+
       const result = await response.json()
       alert(`Price check complete! Updated ${result.updated} calls.`)
       await fetchCalls()
@@ -101,16 +129,39 @@ export default function Home() {
   }
 
   const handleDeleteCall = async (id: string) => {
+    if (!isAdmin) {
+      alert('Please login as admin to delete calls')
+      return
+    }
+
     if (!confirm('Are you sure you want to delete this call?')) return
 
     try {
-      await fetch(`/api/calls/${id}`, {
+      const response = await fetch(`/api/calls/${id}`, {
         method: 'DELETE',
       })
+
+      if (response.status === 401) {
+        alert('Session expired. Please login again.')
+        router.push('/login')
+        return
+      }
+
       await fetchCalls()
     } catch (error) {
       console.error('Error deleting call:', error)
       alert('Failed to delete call')
+    }
+  }
+
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' })
+      setIsAdmin(false)
+      setUsername(null)
+      router.refresh()
+    } catch (error) {
+      console.error('Logout error:', error)
     }
   }
 
@@ -126,12 +177,44 @@ export default function Home() {
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">
-          <div className="flex items-center gap-3 mb-2">
-            <TrendingUp className="w-8 h-8 text-blue-600" />
-            <h1 className="text-3xl font-bold text-gray-900">Swing Trader Sagar</h1>
+          <div className="flex items-center justify-between">
+            <div>
+              <div className="flex items-center gap-3 mb-2">
+                <TrendingUp className="w-8 h-8 text-blue-600" />
+                <h1 className="text-3xl font-bold text-gray-900">Swing Trader Sagar</h1>
+              </div>
+              <p className="text-gray-600">Trading Calls Management System</p>
+              <p className="text-sm text-gray-500">1453 WhatsApp Group Members</p>
+            </div>
+
+            <div className="flex items-center gap-3">
+              {isAdmin ? (
+                <>
+                  <div className="flex items-center gap-2 px-3 py-2 bg-green-50 border border-green-200 rounded-md">
+                    <Shield className="w-4 h-4 text-green-600" />
+                    <span className="text-sm font-medium text-green-900">
+                      Admin: {username}
+                    </span>
+                  </div>
+                  <button
+                    onClick={handleLogout}
+                    className="flex items-center gap-2 px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition-colors text-sm font-medium"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    Logout
+                  </button>
+                </>
+              ) : (
+                <button
+                  onClick={() => router.push('/login')}
+                  className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-sm font-medium"
+                >
+                  <LogIn className="w-4 h-4" />
+                  Admin Login
+                </button>
+              )}
+            </div>
           </div>
-          <p className="text-gray-600">Trading Calls Management System</p>
-          <p className="text-sm text-gray-500">1453 WhatsApp Group Members</p>
         </div>
 
         {/* Stats Cards */}
@@ -190,14 +273,16 @@ export default function Home() {
               </select>
             </div>
 
-            <button
-              onClick={handleCheckPrices}
-              disabled={checking}
-              className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
-            >
-              <RefreshCw className={`w-4 h-4 ${checking ? 'animate-spin' : ''}`} />
-              {checking ? 'Checking...' : 'Check Prices Now'}
-            </button>
+            {isAdmin && (
+              <button
+                onClick={handleCheckPrices}
+                disabled={checking}
+                className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
+              >
+                <RefreshCw className={`w-4 h-4 ${checking ? 'animate-spin' : ''}`} />
+                {checking ? 'Checking...' : 'Check Prices Now'}
+              </button>
+            )}
           </div>
 
           {lastChecked && (
@@ -207,10 +292,22 @@ export default function Home() {
           )}
         </div>
 
-        {/* Call Entry Form */}
-        <div className="mb-6">
-          <CallEntryForm onSubmit={handleCreateCall} />
-        </div>
+        {/* Call Entry Form - Admin Only */}
+        {isAdmin ? (
+          <div className="mb-6">
+            <CallEntryForm onSubmit={handleCreateCall} />
+          </div>
+        ) : (
+          <div className="mb-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <p className="text-sm text-blue-800">
+              <LogIn className="w-4 h-4 inline mr-2" />
+              <a href="/login" className="font-medium underline hover:text-blue-900">
+                Login as admin
+              </a>
+              {' '}to add new trading calls
+            </p>
+          </div>
+        )}
 
         {/* Calls List */}
         {loading ? (
@@ -231,7 +328,7 @@ export default function Home() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {calls.map((call) => (
-              <CallCard key={call.id} call={call} onDelete={handleDeleteCall} />
+              <CallCard key={call.id} call={call} onDelete={isAdmin ? handleDeleteCall : undefined} />
             ))}
           </div>
         )}

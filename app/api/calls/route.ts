@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { isAuthenticatedFromRequest } from '@/lib/auth'
 
-// GET - Fetch all trading calls with optional date filter
+// GET - Fetch all trading calls with optional date filter (PUBLIC)
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams
@@ -43,9 +44,18 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// POST - Create a new trading call
+// POST - Create a new trading call (ADMIN ONLY)
 export async function POST(request: NextRequest) {
   try {
+    // Check authentication
+    const isAdmin = await isAuthenticatedFromRequest(request)
+    if (!isAdmin) {
+      return NextResponse.json(
+        { error: 'Unauthorized - Admin access required' },
+        { status: 401 }
+      )
+    }
+
     const body = await request.json()
 
     const {

@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { isAuthenticatedFromRequest } from '@/lib/auth'
 
-// GET - Fetch a single trading call
+// GET - Fetch a single trading call (PUBLIC)
 export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }
@@ -28,12 +29,21 @@ export async function GET(
   }
 }
 
-// PUT - Update a trading call
+// PUT - Update a trading call (ADMIN ONLY)
 export async function PUT(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
+    // Check authentication
+    const isAdmin = await isAuthenticatedFromRequest(request)
+    if (!isAdmin) {
+      return NextResponse.json(
+        { error: 'Unauthorized - Admin access required' },
+        { status: 401 }
+      )
+    }
+
     const body = await request.json()
 
     const call = await prisma.tradingCall.update({
@@ -51,12 +61,21 @@ export async function PUT(
   }
 }
 
-// DELETE - Delete a trading call
+// DELETE - Delete a trading call (ADMIN ONLY)
 export async function DELETE(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
+    // Check authentication
+    const isAdmin = await isAuthenticatedFromRequest(request)
+    if (!isAdmin) {
+      return NextResponse.json(
+        { error: 'Unauthorized - Admin access required' },
+        { status: 401 }
+      )
+    }
+
     await prisma.tradingCall.delete({
       where: { id: params.id },
     })
