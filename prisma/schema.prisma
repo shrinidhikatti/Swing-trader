@@ -40,7 +40,13 @@ model TradingCall {
   target2Hit      Boolean  @default(false)
   target3Hit      Boolean  @default(false)
   stopLossHit     Boolean  @default(false)
-  hitDate         DateTime?
+  hitDate         DateTime? // Deprecated: use individual hit dates below
+
+  // Individual target hit times
+  target1HitDate  DateTime?
+  target2HitDate  DateTime?
+  target3HitDate  DateTime?
+  stopLossHitDate DateTime?
 
   @@index([callDate])
   @@index([status])

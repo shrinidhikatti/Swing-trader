@@ -1,7 +1,8 @@
 'use client'
 
-import React, { useState } from 'react'
-import { PlusCircle } from 'lucide-react'
+import React, { useState, useEffect } from 'react'
+import { PlusCircle, RefreshCw, TrendingUp } from 'lucide-react'
+import SearchableStockDropdown from './SearchableStockDropdown'
 
 interface CallFormData {
   scriptName: string
@@ -27,6 +28,9 @@ const PATTERN_TYPES = ['TR', 'UB', 'BF', 'BO', 'H&S', 'DB', 'TB', 'Other']
 export default function CallEntryForm({ onSubmit }: CallEntryFormProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [fetchingPrice, setFetchingPrice] = useState(false)
+  const [currentPrice, setCurrentPrice] = useState<number | null>(null)
+  const [priceError, setPriceError] = useState<string | null>(null)
   const [formData, setFormData] = useState<CallFormData>({
     scriptName: '',
     ltp: '',
@@ -47,6 +51,56 @@ export default function CallEntryForm({ onSubmit }: CallEntryFormProps) {
       ...formData,
       [e.target.name]: e.target.value,
     })
+  }
+
+  const fetchLivePrice = async (symbol: string) => {
+    if (!symbol) return
+
+    setFetchingPrice(true)
+    setPriceError(null)
+    setCurrentPrice(null)
+
+    try {
+      const response = await fetch(`/api/stock-price?symbol=${symbol}`)
+      const data = await response.json()
+
+      if (response.ok && data.success) {
+        setCurrentPrice(data.price)
+        // Auto-fill LTP with current price
+        setFormData((prev) => ({
+          ...prev,
+          ltp: data.price.toFixed(2),
+        }))
+      } else {
+        setPriceError(data.error || 'Failed to fetch price')
+      }
+    } catch (error) {
+      console.error('Error fetching price:', error)
+      setPriceError('Failed to fetch price')
+    } finally {
+      setFetchingPrice(false)
+    }
+  }
+
+  const handleScriptChange = (value: string) => {
+    setFormData({
+      ...formData,
+      scriptName: value,
+    })
+
+    // Fetch live price when stock is selected
+    if (value) {
+      fetchLivePrice(value)
+    } else {
+      setCurrentPrice(null)
+      setPriceError(null)
+    }
+  }
+
+  const handleRefreshPrice = () => {
+    if (formData.scriptName) {
+      fetchLivePrice(formData.scriptName)
+    }
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -70,6 +124,8 @@ export default function CallEntryForm({ onSubmit }: CallEntryFormProps) {
         resistance: '',
         callDate: new Date().toISOString().split('T')[0],
       })
+      setCurrentPrice(null)
+      setPriceError(null)
       setIsOpen(false)
     } catch (error) {
       console.error('Error submitting form:', error)
@@ -101,14 +157,10 @@ export default function CallEntryForm({ onSubmit }: CallEntryFormProps) {
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Script Name <span className="text-red-500">*</span>
             </label>
-            <input
-              type="text"
-              name="scriptName"
+            <SearchableStockDropdown
               value={formData.scriptName}
-              onChange={handleChange}
+              onChange={handleScriptChange}
               required
-              placeholder="e.g., RELIANCE, TCS, INFY"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
 
@@ -126,6 +178,50 @@ export default function CallEntryForm({ onSubmit }: CallEntryFormProps) {
             />
           </div>
 
+          {/* Live Current Price Display */}
+          {formData.scriptName && (
+            <div className="md:col-span-2">
+              <div className="bg-gradient-to-r from-blue-50 to-green-50 border-2 border-blue-200 rounded-lg p-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <TrendingUp className="w-6 h-6 text-blue-600" />
+                    <div>
+                      <p className="text-sm font-medium text-gray-700">
+                        Current Market Price
+                      </p>
+                      {fetchingPrice ? (
+                        <div className="flex items-center gap-2 mt-1">
+                          <RefreshCw className="w-4 h-4 animate-spin text-blue-600" />
+                          <span className="text-sm text-gray-600">Fetching live price...</span>
+                        </div>
+                      ) : currentPrice ? (
+                        <div className="flex items-center gap-2 mt-1">
+                          <span className="text-2xl font-bold text-green-600">
+                            ₹{currentPrice.toFixed(2)}
+                          </span>
+                          <span className="text-xs text-gray-500">
+                            {new Date().toLocaleTimeString('en-IN')}
+                          </span>
+                        </div>
+                      ) : priceError ? (
+                        <p className="text-sm text-red-600 mt-1">{priceError}</p>
+                      ) : null}
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleRefreshPrice}
+                    disabled={fetchingPrice}
+                    className="flex items-center gap-2 px-3 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-sm font-medium disabled:opacity-50"
+                  >
+                    <RefreshCw className={`w-4 h-4 ${fetchingPrice ? 'animate-spin' : ''}`} />
+                    Refresh
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               LTP (Entry Price) <span className="text-red-500">*</span>
@@ -137,9 +233,12 @@ export default function CallEntryForm({ onSubmit }: CallEntryFormProps) {
               value={formData.ltp}
               onChange={handleChange}
               required
-              placeholder="0.00"
+              placeholder="Auto-filled from current price"
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
+            <p className="text-xs text-gray-500 mt-1">
+              Auto-filled with current market price. You can edit if needed.
+            </p>
           </div>
 
           <div>

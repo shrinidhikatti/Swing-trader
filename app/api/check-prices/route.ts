@@ -56,6 +56,12 @@ export async function POST(request: NextRequest) {
       let target3Hit = call.target3Hit
       let stopLossHit = call.stopLossHit
       let hitDate = call.hitDate
+      let target1HitDate = call.target1HitDate
+      let target2HitDate = call.target2HitDate
+      let target3HitDate = call.target3HitDate
+      let stopLossHitDate = call.stopLossHitDate
+
+      const now = new Date()
 
       // Check if targets or stop loss hit
       if (currentPrice >= call.target3) {
@@ -63,20 +69,27 @@ export async function POST(request: NextRequest) {
         target1Hit = true
         target2Hit = true
         target3Hit = true
-        hitDate = hitDate || new Date()
+        hitDate = hitDate || now
+        target1HitDate = target1HitDate || now
+        target2HitDate = target2HitDate || now
+        target3HitDate = target3HitDate || now
       } else if (currentPrice >= call.target2) {
         status = 'TARGET2_HIT'
         target1Hit = true
         target2Hit = true
-        hitDate = hitDate || new Date()
+        hitDate = hitDate || now
+        target1HitDate = target1HitDate || now
+        target2HitDate = target2HitDate || now
       } else if (currentPrice >= call.target1) {
         status = 'TARGET1_HIT'
         target1Hit = true
-        hitDate = hitDate || new Date()
+        hitDate = hitDate || now
+        target1HitDate = target1HitDate || now
       } else if (currentPrice <= call.stopLoss) {
         status = 'SL_HIT'
         stopLossHit = true
-        hitDate = hitDate || new Date()
+        hitDate = hitDate || now
+        stopLossHitDate = stopLossHitDate || now
       }
 
       // Update the call
@@ -90,6 +103,10 @@ export async function POST(request: NextRequest) {
           target3Hit,
           stopLossHit,
           hitDate,
+          target1HitDate,
+          target2HitDate,
+          target3HitDate,
+          stopLossHitDate,
           lastChecked: new Date(),
         },
       })

@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import { CheckCircle2, XCircle, TrendingUp, TrendingDown } from 'lucide-react'
+import { CheckCircle2, XCircle, TrendingUp, TrendingDown, Clock } from 'lucide-react'
 
 interface TradingCall {
   id: string
@@ -24,6 +24,10 @@ interface TradingCall {
   stopLossHit: boolean
   callDate: string
   hitDate: string | null
+  target1HitDate: string | null
+  target2HitDate: string | null
+  target3HitDate: string | null
+  stopLossHitDate: string | null
 }
 
 interface CallCardProps {
@@ -32,6 +36,33 @@ interface CallCardProps {
 }
 
 export default function CallCard({ call, onDelete }: CallCardProps) {
+  // Calculate time duration from call date to a specific hit date
+  const calculateDuration = (hitDateStr: string | null) => {
+    if (!hitDateStr) return null
+
+    const callTime = new Date(call.callDate).getTime()
+    const hitTime = new Date(hitDateStr).getTime()
+    const diffMs = hitTime - callTime
+
+    // Convert to days, hours, minutes
+    const days = Math.floor(diffMs / (1000 * 60 * 60 * 24))
+    const hours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+    const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60))
+
+    if (days > 0) {
+      return `${days}d ${hours}h`
+    } else if (hours > 0) {
+      return `${hours}h ${minutes}m`
+    } else {
+      return `${minutes}m`
+    }
+  }
+
+  // Calculate time duration from call date to hit date (for backward compatibility)
+  const getTimeDuration = () => {
+    return calculateDuration(call.hitDate)
+  }
+
   const getStatusColor = () => {
     if (call.stopLossHit) return 'bg-red-50 border-red-200'
     if (call.target1Hit || call.target2Hit || call.target3Hit) return 'bg-green-50 border-green-200'
@@ -104,12 +135,57 @@ export default function CallCard({ call, onDelete }: CallCardProps) {
             })}
           </p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-col items-end gap-1">
           {getStatusBadge()}
-          {call.rank && (
-            <span className="px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
-              Rank {call.rank}
-            </span>
+
+          {/* Hit Status with Timings - Top Right */}
+          {call.target1HitDate && (
+            <div className="flex items-center justify-between text-xs text-green-700 bg-green-50 px-2 py-1 rounded min-w-[140px]">
+              <div className="flex items-center">
+                <CheckCircle2 className="w-3 h-3 mr-1 flex-shrink-0" />
+                <span className="font-medium text-[10px]">Target 1 Hit</span>
+              </div>
+              <div className="flex items-center ml-2">
+                <Clock className="w-3 h-3 mr-0.5 flex-shrink-0" />
+                <span className="font-semibold text-[10px]">{calculateDuration(call.target1HitDate)}</span>
+              </div>
+            </div>
+          )}
+          {call.target2HitDate && (
+            <div className="flex items-center justify-between text-xs text-green-700 bg-green-50 px-2 py-1 rounded min-w-[140px]">
+              <div className="flex items-center">
+                <CheckCircle2 className="w-3 h-3 mr-1 flex-shrink-0" />
+                <span className="font-medium text-[10px]">Target 2 Hit</span>
+              </div>
+              <div className="flex items-center ml-2">
+                <Clock className="w-3 h-3 mr-0.5 flex-shrink-0" />
+                <span className="font-semibold text-[10px]">{calculateDuration(call.target2HitDate)}</span>
+              </div>
+            </div>
+          )}
+          {call.target3HitDate && (
+            <div className="flex items-center justify-between text-xs text-green-700 bg-green-50 px-2 py-1 rounded min-w-[140px]">
+              <div className="flex items-center">
+                <CheckCircle2 className="w-3 h-3 mr-1 flex-shrink-0" />
+                <span className="font-medium text-[10px]">Target 3 Hit</span>
+              </div>
+              <div className="flex items-center ml-2">
+                <Clock className="w-3 h-3 mr-0.5 flex-shrink-0" />
+                <span className="font-semibold text-[10px]">{calculateDuration(call.target3HitDate)}</span>
+              </div>
+            </div>
+          )}
+          {call.stopLossHitDate && (
+            <div className="flex items-center justify-between text-xs text-red-700 bg-red-50 px-2 py-1 rounded min-w-[140px]">
+              <div className="flex items-center">
+                <XCircle className="w-3 h-3 mr-1 flex-shrink-0" />
+                <span className="font-medium text-[10px]">Stop Loss Hit</span>
+              </div>
+              <div className="flex items-center ml-2">
+                <Clock className="w-3 h-3 mr-0.5 flex-shrink-0" />
+                <span className="font-semibold text-[10px]">{calculateDuration(call.stopLossHitDate)}</span>
+              </div>
+            </div>
           )}
         </div>
       </div>
@@ -135,31 +211,19 @@ export default function CallCard({ call, onDelete }: CallCardProps) {
         <div className="grid grid-cols-4 gap-2 text-xs">
           <div>
             <p className="text-gray-600">Target 1</p>
-            <p className="font-semibold text-green-700 flex items-center">
-              ₹{call.target1.toFixed(2)}
-              {call.target1Hit && <CheckCircle2 className="w-3 h-3 ml-1 text-green-600" />}
-            </p>
+            <p className="font-semibold text-green-700">₹{call.target1.toFixed(2)}</p>
           </div>
           <div>
             <p className="text-gray-600">Target 2</p>
-            <p className="font-semibold text-green-700 flex items-center">
-              ₹{call.target2.toFixed(2)}
-              {call.target2Hit && <CheckCircle2 className="w-3 h-3 ml-1 text-green-600" />}
-            </p>
+            <p className="font-semibold text-green-700">₹{call.target2.toFixed(2)}</p>
           </div>
           <div>
             <p className="text-gray-600">Target 3</p>
-            <p className="font-semibold text-green-700 flex items-center">
-              ₹{call.target3.toFixed(2)}
-              {call.target3Hit && <CheckCircle2 className="w-3 h-3 ml-1 text-green-600" />}
-            </p>
+            <p className="font-semibold text-green-700">₹{call.target3.toFixed(2)}</p>
           </div>
           <div>
             <p className="text-gray-600">Stop Loss</p>
-            <p className="font-semibold text-red-700 flex items-center">
-              ₹{call.stopLoss.toFixed(2)}
-              {call.stopLossHit && <XCircle className="w-3 h-3 ml-1 text-red-600" />}
-            </p>
+            <p className="font-semibold text-red-700">₹{call.stopLoss.toFixed(2)}</p>
           </div>
         </div>
       </div>
