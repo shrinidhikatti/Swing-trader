@@ -184,7 +184,6 @@ export default function Home() {
                 <h1 className="text-3xl font-bold text-gray-900">Swing Trader Sagar</h1>
               </div>
               <p className="text-gray-600">Trading Calls Management System</p>
-              <p className="text-sm text-gray-500">1453 WhatsApp Group Members</p>
             </div>
 
             <div className="flex items-center gap-3">

@@ -12,6 +12,7 @@
     "db:push": "prisma db push",
     "db:studio": "prisma studio",
     "db:reset": "prisma db push --force-reset",
+    "db:seed": "npx tsx prisma/seed.ts",
     "check-prices": "ts-node scripts/check-prices.ts",
     "setup": "npm install && prisma generate && prisma db push"
   },
