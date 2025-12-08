@@ -64,32 +64,60 @@ export async function POST(request: NextRequest) {
       const now = new Date()
 
       // Check if targets or stop loss hit
-      if (currentPrice >= call.target3) {
-        status = 'TARGET3_HIT'
-        target1Hit = true
-        target2Hit = true
-        target3Hit = true
-        hitDate = hitDate || now
-        target1HitDate = target1HitDate || now
-        target2HitDate = target2HitDate || now
-        target3HitDate = target3HitDate || now
-      } else if (currentPrice >= call.target2) {
-        status = 'TARGET2_HIT'
-        target1Hit = true
-        target2Hit = true
-        hitDate = hitDate || now
-        target1HitDate = target1HitDate || now
-        target2HitDate = target2HitDate || now
-      } else if (currentPrice >= call.target1) {
-        status = 'TARGET1_HIT'
-        target1Hit = true
-        hitDate = hitDate || now
-        target1HitDate = target1HitDate || now
-      } else if (currentPrice <= call.stopLoss) {
-        status = 'SL_HIT'
-        stopLossHit = true
-        hitDate = hitDate || now
-        stopLossHitDate = stopLossHitDate || now
+      // Important: Only check if neither targets nor stop loss have been hit before
+      // Once one condition is met, the trade is closed
+
+      if (!call.target1Hit && !call.target2Hit && !call.target3Hit && !call.stopLossHit) {
+        // Fresh call - check what got hit
+        if (currentPrice >= call.target3) {
+          status = 'TARGET3_HIT'
+          target1Hit = true
+          target2Hit = true
+          target3Hit = true
+          hitDate = now
+          target1HitDate = now
+          target2HitDate = now
+          target3HitDate = now
+        } else if (currentPrice >= call.target2) {
+          status = 'TARGET2_HIT'
+          target1Hit = true
+          target2Hit = true
+          hitDate = now
+          target1HitDate = now
+          target2HitDate = now
+        } else if (currentPrice >= call.target1) {
+          status = 'TARGET1_HIT'
+          target1Hit = true
+          hitDate = now
+          target1HitDate = now
+        } else if (currentPrice <= call.stopLoss) {
+          status = 'SL_HIT'
+          stopLossHit = true
+          hitDate = now
+          stopLossHitDate = now
+        }
+      } else if (call.stopLossHit) {
+        // Stop loss already hit - no further checks needed
+        // Keep existing status
+      } else {
+        // Some targets already hit - check for higher targets only
+        if (!call.target3Hit && currentPrice >= call.target3) {
+          status = 'TARGET3_HIT'
+          target3Hit = true
+          target3HitDate = target3HitDate || now
+          // Also mark lower targets if not already marked
+          target1Hit = true
+          target2Hit = true
+          target1HitDate = target1HitDate || now
+          target2HitDate = target2HitDate || now
+        } else if (!call.target2Hit && currentPrice >= call.target2) {
+          status = 'TARGET2_HIT'
+          target2Hit = true
+          target2HitDate = target2HitDate || now
+          target1Hit = true
+          target1HitDate = target1HitDate || now
+        }
+        // If target already hit, don't check stop loss anymore
       }
 
       // Update the call
