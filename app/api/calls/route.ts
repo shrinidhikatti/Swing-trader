@@ -6,20 +6,32 @@ import { isAuthenticatedFromRequest } from '@/lib/auth'
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams
-    const date = searchParams.get('date')
+    const fromDate = searchParams.get('fromDate')
+    const toDate = searchParams.get('toDate')
     const status = searchParams.get('status')
+
+    // Check if admin
+    const isAdmin = await isAuthenticatedFromRequest(request)
 
     const where: any = {}
 
-    if (date) {
-      const startDate = new Date(date)
-      startDate.setHours(0, 0, 0, 0)
-      const endDate = new Date(date)
-      endDate.setHours(23, 59, 59, 999)
+    // TEMPORARILY DISABLED - Show all calls for testing
+    // TODO: Re-enable 30-day filtering after testing
 
-      where.callDate = {
-        gte: startDate,
-        lte: endDate,
+    // Date range filter
+    if (fromDate || toDate) {
+      where.callDate = {}
+
+      if (fromDate) {
+        const start = new Date(fromDate)
+        start.setHours(0, 0, 0, 0)
+        where.callDate.gte = start
+      }
+
+      if (toDate) {
+        const end = new Date(toDate)
+        end.setHours(23, 59, 59, 999)
+        where.callDate.lte = end
       }
     }
 
@@ -29,9 +41,10 @@ export async function GET(request: NextRequest) {
 
     const calls = await prisma.tradingCall.findMany({
       where,
-      orderBy: {
-        callDate: 'desc',
-      },
+      orderBy: [
+        { isFlashCard: 'desc' }, // Flash cards first
+        { callDate: 'desc' },     // Then by date (newest first)
+      ],
     })
 
     return NextResponse.json(calls)
@@ -71,6 +84,9 @@ export async function POST(request: NextRequest) {
       support,
       resistance,
       callDate,
+      tradeType,
+      isFlashCard,
+      eventMarker,
     } = body
 
     // Validation
@@ -96,6 +112,9 @@ export async function POST(request: NextRequest) {
         resistance: resistance ? parseFloat(resistance) : null,
         callDate: callDate ? new Date(callDate) : new Date(),
         currentPrice: parseFloat(ltp),
+        tradeType: tradeType || 'SWING',
+        isFlashCard: isFlashCard || false,
+        eventMarker: eventMarker || null,
       },
     })
 

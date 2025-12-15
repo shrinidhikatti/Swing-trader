@@ -50,6 +50,9 @@ export async function POST(request: NextRequest) {
       }
 
       const currentPrice = priceData.price
+      const dayHigh = priceData.dayHigh
+      const dayLow = priceData.dayLow
+
       let status = call.status
       let target1Hit = call.target1Hit
       let target2Hit = call.target2Hit
@@ -64,44 +67,96 @@ export async function POST(request: NextRequest) {
       const now = new Date()
 
       // Check if targets or stop loss hit
-      // Important: Only check if neither targets nor stop loss have been hit before
-      // Once one condition is met, the trade is closed
+      // Important: Use dayHigh for targets (captures intraday highs)
+      // Use dayLow for stop loss (captures intraday lows)
+      // This ensures we don't miss targets/SL that were hit during the day
 
       if (!call.target1Hit && !call.target2Hit && !call.target3Hit && !call.stopLossHit) {
         // Fresh call - check what got hit
-        if (currentPrice >= call.target3) {
-          status = 'TARGET3_HIT'
-          target1Hit = true
-          target2Hit = true
-          target3Hit = true
-          hitDate = now
-          target1HitDate = now
-          target2HitDate = now
-          target3HitDate = now
-        } else if (currentPrice >= call.target2) {
-          status = 'TARGET2_HIT'
-          target1Hit = true
-          target2Hit = true
-          hitDate = now
-          target1HitDate = now
-          target2HitDate = now
-        } else if (currentPrice >= call.target1) {
-          status = 'TARGET1_HIT'
-          target1Hit = true
-          hitDate = now
-          target1HitDate = now
-        } else if (currentPrice <= call.stopLoss) {
+        // IMPORTANT: When both target and SL are hit on same day, we need to determine which happened first
+
+        const targetHit = dayHigh >= call.target1
+        const slHit = dayLow <= call.stopLoss
+
+        // If both target and SL were hit on same day, determine which likely happened first
+        // Logic: Check current price position - if closer to low, SL hit first; if closer to high, target hit first
+        if (targetHit && slHit) {
+          // Both hit on same day - use current price to determine which happened first
+          const distanceFromHigh = Math.abs(currentPrice - dayHigh)
+          const distanceFromLow = Math.abs(currentPrice - dayLow)
+
+          // If current price is closer to dayLow, stop loss likely hit first (and stayed low)
+          // If current price is closer to dayHigh, target likely hit first (and stayed high)
+          if (distanceFromLow < distanceFromHigh) {
+            // Price is closer to low - SL hit first, then might have recovered
+            // But since SL hit first, trader would have exited
+            status = 'SL_HIT'
+            stopLossHit = true
+            hitDate = now
+            stopLossHitDate = now
+          } else {
+            // Price is closer to high - Target hit first
+            // Check which target level
+            if (dayHigh >= call.target3) {
+              status = 'TARGET3_HIT'
+              target1Hit = true
+              target2Hit = true
+              target3Hit = true
+              hitDate = now
+              target1HitDate = now
+              target2HitDate = now
+              target3HitDate = now
+            } else if (dayHigh >= call.target2) {
+              status = 'TARGET2_HIT'
+              target1Hit = true
+              target2Hit = true
+              hitDate = now
+              target1HitDate = now
+              target2HitDate = now
+            } else {
+              status = 'TARGET1_HIT'
+              target1Hit = true
+              hitDate = now
+              target1HitDate = now
+            }
+          }
+        } else if (slHit) {
+          // Only stop loss hit
           status = 'SL_HIT'
           stopLossHit = true
           hitDate = now
           stopLossHitDate = now
+        } else if (targetHit) {
+          // Only target hit (no SL)
+          if (dayHigh >= call.target3) {
+            status = 'TARGET3_HIT'
+            target1Hit = true
+            target2Hit = true
+            target3Hit = true
+            hitDate = now
+            target1HitDate = now
+            target2HitDate = now
+            target3HitDate = now
+          } else if (dayHigh >= call.target2) {
+            status = 'TARGET2_HIT'
+            target1Hit = true
+            target2Hit = true
+            hitDate = now
+            target1HitDate = now
+            target2HitDate = now
+          } else {
+            status = 'TARGET1_HIT'
+            target1Hit = true
+            hitDate = now
+            target1HitDate = now
+          }
         }
       } else if (call.stopLossHit) {
         // Stop loss already hit - no further checks needed
         // Keep existing status
       } else {
         // Some targets already hit - check for higher targets only
-        if (!call.target3Hit && currentPrice >= call.target3) {
+        if (!call.target3Hit && dayHigh >= call.target3) {
           status = 'TARGET3_HIT'
           target3Hit = true
           target3HitDate = target3HitDate || now
@@ -110,7 +165,7 @@ export async function POST(request: NextRequest) {
           target2Hit = true
           target1HitDate = target1HitDate || now
           target2HitDate = target2HitDate || now
-        } else if (!call.target2Hit && currentPrice >= call.target2) {
+        } else if (!call.target2Hit && dayHigh >= call.target2) {
           status = 'TARGET2_HIT'
           target2Hit = true
           target2HitDate = target2HitDate || now

@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import CallCard from '@/components/CallCard'
 import CallEntryForm from '@/components/CallEntryForm'
-import { Calendar, RefreshCw, Settings, TrendingUp, LogIn, LogOut, Shield } from 'lucide-react'
+import { Calendar, RefreshCw, Settings, TrendingUp, LogIn, LogOut, Shield, Users, User } from 'lucide-react'
 
 interface TradingCall {
   id: string
@@ -31,6 +31,9 @@ interface TradingCall {
   target2HitDate: string | null
   target3HitDate: string | null
   stopLossHitDate: string | null
+  tradeType: string
+  isFlashCard: boolean
+  eventMarker: string | null
 }
 
 export default function Home() {
@@ -38,10 +41,13 @@ export default function Home() {
   const [calls, setCalls] = useState<TradingCall[]>([])
   const [loading, setLoading] = useState(true)
   const [checking, setChecking] = useState(false)
-  const [selectedDate, setSelectedDate] = useState<string>('')
+  const [checkingEvents, setCheckingEvents] = useState(false)
+  const [fromDate, setFromDate] = useState<string>('')
+  const [toDate, setToDate] = useState<string>('')
   const [filterStatus, setFilterStatus] = useState<string>('all')
   const [lastChecked, setLastChecked] = useState<string | null>(null)
   const [isAdmin, setIsAdmin] = useState(false)
+  const [isUser, setIsUser] = useState(false)
   const [username, setUsername] = useState<string | null>(null)
   const [nextRefresh, setNextRefresh] = useState<number>(15 * 60) // 15 minutes in seconds
   const [autoRefreshEnabled, setAutoRefreshEnabled] = useState(true)
@@ -59,7 +65,7 @@ export default function Home() {
     fetchCalls()
     fetchLastChecked()
     setCurrentPage(1) // Reset to page 1 when filters change
-  }, [selectedDate, filterStatus])
+  }, [fromDate, toDate, filterStatus])
 
   // Auto-refresh countdown timer (every second)
   useEffect(() => {
@@ -110,7 +116,8 @@ export default function Home() {
     try {
       const response = await fetch('/api/auth/me')
       const data = await response.json()
-      setIsAdmin(data.authenticated)
+      setIsAdmin(data.authenticated && data.user?.isAdmin)
+      setIsUser(data.authenticated && !data.user?.isAdmin)
       setUsername(data.user?.username || null)
     } catch (error) {
       console.error('Error checking auth:', error)
@@ -121,14 +128,23 @@ export default function Home() {
     try {
       setLoading(true)
       const params = new URLSearchParams()
-      if (selectedDate) params.append('date', selectedDate)
+      if (fromDate) params.append('fromDate', fromDate)
+      if (toDate) params.append('toDate', toDate)
       if (filterStatus !== 'all') params.append('status', filterStatus)
 
       const response = await fetch(`/api/calls?${params.toString()}`)
       const data = await response.json()
-      setCalls(data)
+
+      // Ensure data is an array
+      if (Array.isArray(data)) {
+        setCalls(data)
+      } else {
+        console.error('Received non-array data:', data)
+        setCalls([])
+      }
     } catch (error) {
       console.error('Error fetching calls:', error)
+      setCalls([])
     } finally {
       setLoading(false)
     }
@@ -190,6 +206,35 @@ export default function Home() {
     }
   }
 
+  const handleCheckEvents = async () => {
+    if (!isAdmin) {
+      alert('Please login as admin to check events')
+      return
+    }
+
+    try {
+      setCheckingEvents(true)
+      const response = await fetch('/api/check-events', {
+        method: 'POST',
+      })
+
+      if (response.status === 401) {
+        alert('Session expired. Please login again.')
+        router.push('/login')
+        return
+      }
+
+      const result = await response.json()
+      alert(`Event check complete! Updated ${result.updated} calls with events.`)
+      await fetchCalls()
+    } catch (error) {
+      console.error('Error checking events:', error)
+      alert('Failed to check events')
+    } finally {
+      setCheckingEvents(false)
+    }
+  }
+
   // Format seconds to MM:SS
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60)
@@ -227,6 +272,7 @@ export default function Home() {
     try {
       await fetch('/api/auth/logout', { method: 'POST' })
       setIsAdmin(false)
+      setIsUser(false)
       setUsername(null)
       router.refresh()
     } catch (error) {
@@ -271,6 +317,29 @@ export default function Home() {
                     </span>
                   </div>
                   <button
+                    onClick={() => router.push('/manage-users')}
+                    className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors text-sm font-medium"
+                  >
+                    <Users className="w-4 h-4" />
+                    Manage Users
+                  </button>
+                  <button
+                    onClick={handleLogout}
+                    className="flex items-center gap-2 px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition-colors text-sm font-medium"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    Logout
+                  </button>
+                </>
+              ) : isUser ? (
+                <>
+                  <div className="flex items-center gap-2 px-3 py-2 bg-blue-50 border border-blue-200 rounded-md">
+                    <User className="w-4 h-4 text-blue-600" />
+                    <span className="text-sm font-medium text-blue-900">
+                      {username}
+                    </span>
+                  </div>
+                  <button
                     onClick={handleLogout}
                     className="flex items-center gap-2 px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition-colors text-sm font-medium"
                   >
@@ -279,13 +348,29 @@ export default function Home() {
                   </button>
                 </>
               ) : (
-                <button
-                  onClick={() => router.push('/login')}
-                  className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-sm font-medium"
-                >
-                  <LogIn className="w-4 h-4" />
-                  Admin Login
-                </button>
+                <>
+                  <button
+                    onClick={() => router.push('/user-login')}
+                    className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors text-sm font-medium"
+                  >
+                    <LogIn className="w-4 h-4" />
+                    User Login
+                  </button>
+                  <button
+                    onClick={() => router.push('/register')}
+                    className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors text-sm font-medium"
+                  >
+                    <Users className="w-4 h-4" />
+                    Register
+                  </button>
+                  <button
+                    onClick={() => router.push('/login')}
+                    className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-sm font-medium"
+                  >
+                    <Shield className="w-4 h-4" />
+                    Admin Login
+                  </button>
+                </>
               )}
             </div>
           </div>
@@ -317,16 +402,32 @@ export default function Home() {
             <div className="flex flex-col md:flex-row gap-3 flex-1">
               <div className="flex items-center gap-2">
                 <Calendar className="w-4 h-4 text-gray-600" />
+                <label className="text-sm text-gray-700 font-medium">From:</label>
                 <input
                   type="date"
-                  value={selectedDate}
-                  onChange={(e) => setSelectedDate(e.target.value)}
+                  value={fromDate}
+                  onChange={(e) => setFromDate(e.target.value)}
                   className="px-3 py-2 border border-gray-300 rounded-md text-sm"
+                  placeholder="From Date"
                 />
-                {selectedDate && (
+              </div>
+
+              <div className="flex items-center gap-2">
+                <label className="text-sm text-gray-700 font-medium">To:</label>
+                <input
+                  type="date"
+                  value={toDate}
+                  onChange={(e) => setToDate(e.target.value)}
+                  className="px-3 py-2 border border-gray-300 rounded-md text-sm"
+                  placeholder="To Date"
+                />
+                {(fromDate || toDate) && (
                   <button
-                    onClick={() => setSelectedDate('')}
-                    className="text-sm text-blue-600 hover:text-blue-800"
+                    onClick={() => {
+                      setFromDate('')
+                      setToDate('')
+                    }}
+                    className="text-sm text-blue-600 hover:text-blue-800 font-medium"
                   >
                     Clear
                   </button>
@@ -348,14 +449,24 @@ export default function Home() {
             </div>
 
             {isAdmin && (
-              <button
-                onClick={handleCheckPrices}
-                disabled={checking}
-                className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
-              >
-                <RefreshCw className={`w-4 h-4 ${checking ? 'animate-spin' : ''}`} />
-                {checking ? 'Checking...' : 'Check Prices Now'}
-              </button>
+              <div className="flex gap-2">
+                <button
+                  onClick={handleCheckPrices}
+                  disabled={checking}
+                  className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
+                >
+                  <RefreshCw className={`w-4 h-4 ${checking ? 'animate-spin' : ''}`} />
+                  {checking ? 'Checking...' : 'Check Prices'}
+                </button>
+                <button
+                  onClick={handleCheckEvents}
+                  disabled={checkingEvents}
+                  className="flex items-center gap-2 bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
+                >
+                  <Calendar className={`w-4 h-4 ${checkingEvents ? 'animate-spin' : ''}`} />
+                  {checkingEvents ? 'Checking...' : 'Check Events'}
+                </button>
+              </div>
             )}
           </div>
 

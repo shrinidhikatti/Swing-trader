@@ -3,6 +3,8 @@ import axios from 'axios'
 export interface StockPrice {
   symbol: string
   price: number
+  dayHigh: number
+  dayLow: number
   timestamp: Date
 }
 
@@ -37,6 +39,8 @@ export async function fetchStockPrice(symbol: string): Promise<StockPrice | null
 
     const meta = result.meta
     const currentPrice = meta?.regularMarketPrice || meta?.previousClose
+    const dayHigh = meta?.regularMarketDayHigh || currentPrice
+    const dayLow = meta?.regularMarketDayLow || currentPrice
 
     if (!currentPrice) {
       console.error(`No price data for symbol: ${formattedSymbol}`)
@@ -46,6 +50,8 @@ export async function fetchStockPrice(symbol: string): Promise<StockPrice | null
     return {
       symbol: formattedSymbol,
       price: currentPrice,
+      dayHigh: dayHigh,
+      dayLow: dayLow,
       timestamp: new Date()
     }
   } catch (error) {

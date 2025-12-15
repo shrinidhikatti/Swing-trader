@@ -28,6 +28,9 @@ interface TradingCall {
   target2HitDate: string | null
   target3HitDate: string | null
   stopLossHitDate: string | null
+  tradeType: string
+  isFlashCard: boolean
+  eventMarker: string | null
 }
 
 interface CallCardProps {
@@ -64,6 +67,8 @@ export default function CallCard({ call, onDelete }: CallCardProps) {
   }
 
   const getStatusColor = () => {
+    // Flash cards get golden background
+    if (call.isFlashCard) return 'bg-gradient-to-br from-yellow-50 to-amber-100 border-yellow-400 border-2 shadow-lg'
     if (call.stopLossHit) return 'bg-red-50 border-red-200'
     if (call.target1Hit || call.target2Hit || call.target3Hit) return 'bg-green-50 border-green-200'
     return 'bg-white border-gray-200'
@@ -134,6 +139,11 @@ export default function CallCard({ call, onDelete }: CallCardProps) {
               year: 'numeric',
             })}
           </p>
+          {call.rank && (
+            <p className="text-xs font-semibold text-blue-600 mt-0.5">
+              Rank {call.rank}
+            </p>
+          )}
         </div>
         <div className="flex flex-col items-end gap-1">
           {getStatusBadge()}
@@ -248,6 +258,16 @@ export default function CallCard({ call, onDelete }: CallCardProps) {
           </span>
         )}
       </div>
+
+      {/* Event Marker */}
+      {call.eventMarker && (
+        <div className="mt-3 pt-3 border-t border-gray-200">
+          <div className="inline-flex items-center px-3 py-1.5 bg-purple-100 border border-purple-300 rounded-full text-xs font-bold text-purple-800">
+            <span className="mr-1">📢</span>
+            Event: {call.eventMarker}
+          </div>
+        </div>
+      )}
 
       {onDelete && (
         <button

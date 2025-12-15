@@ -9,15 +9,29 @@ const secret = new TextEncoder().encode(
 export interface SessionData {
   username: string
   isAdmin: boolean
+  userId?: string
   iat: number
   exp: number
 }
 
 /**
- * Create a JWT token for the session
+ * Create a JWT token for admin session
  */
 export async function createSession(username: string): Promise<string> {
   const token = await new SignJWT({ username, isAdmin: true })
+    .setProtectedHeader({ alg: 'HS256' })
+    .setIssuedAt()
+    .setExpirationTime('24h')
+    .sign(secret)
+
+  return token
+}
+
+/**
+ * Create a JWT token for regular user session
+ */
+export async function createUserSession(username: string, userId: string): Promise<string> {
+  const token = await new SignJWT({ username, userId, isAdmin: false })
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
     .setExpirationTime('24h')

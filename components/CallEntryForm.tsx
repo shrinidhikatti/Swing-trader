@@ -17,6 +17,9 @@ interface CallFormData {
   support: string
   resistance: string
   callDate: string
+  tradeType: string
+  isFlashCard: boolean
+  eventMarker: string
 }
 
 interface CallEntryFormProps {
@@ -29,6 +32,7 @@ export default function CallEntryForm({ onSubmit }: CallEntryFormProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [fetchingPrice, setFetchingPrice] = useState(false)
+  const [fetchingEvents, setFetchingEvents] = useState(false)
   const [currentPrice, setCurrentPrice] = useState<number | null>(null)
   const [priceError, setPriceError] = useState<string | null>(null)
   const [formData, setFormData] = useState<CallFormData>({
@@ -44,6 +48,9 @@ export default function CallEntryForm({ onSubmit }: CallEntryFormProps) {
     support: '',
     resistance: '',
     callDate: new Date().toISOString().split('T')[0],
+    tradeType: 'SWING',
+    isFlashCard: false,
+    eventMarker: '',
   })
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -51,6 +58,28 @@ export default function CallEntryForm({ onSubmit }: CallEntryFormProps) {
       ...formData,
       [e.target.name]: e.target.value,
     })
+  }
+
+  const fetchStockEvents = async (symbol: string) => {
+    if (!symbol) return
+
+    setFetchingEvents(true)
+
+    try {
+      const response = await fetch(`/api/stock-events?symbol=${symbol}`)
+      const data = await response.json()
+
+      if (response.ok && data.success) {
+        setFormData((prev) => ({
+          ...prev,
+          eventMarker: data.eventMarker || '',
+        }))
+      }
+    } catch (error) {
+      console.error('Error fetching events:', error)
+    } finally {
+      setFetchingEvents(false)
+    }
   }
 
   const fetchLivePrice = async (symbol: string) => {
@@ -123,6 +152,9 @@ export default function CallEntryForm({ onSubmit }: CallEntryFormProps) {
         support: '',
         resistance: '',
         callDate: new Date().toISOString().split('T')[0],
+        tradeType: 'SWING',
+        isFlashCard: false,
+        eventMarker: '',
       })
       setCurrentPrice(null)
       setPriceError(null)
@@ -260,6 +292,25 @@ export default function CallEntryForm({ onSubmit }: CallEntryFormProps) {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
+              Trade Type <span className="text-red-500">*</span>
+            </label>
+            <select
+              name="tradeType"
+              value={formData.tradeType}
+              onChange={handleChange}
+              required
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+              <option value="SWING">Swing Trade</option>
+              <option value="LONG_TERM">Long Term</option>
+            </select>
+            <p className="text-xs text-gray-500 mt-1">
+              Swing trades auto-expire after 30 days if no target/SL hit
+            </p>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Target 1 <span className="text-red-500">*</span>
             </label>
             <input
@@ -380,6 +431,52 @@ export default function CallEntryForm({ onSubmit }: CallEntryFormProps) {
               placeholder="Bullish/Bearish/Neutral"
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Flash Card (Internal News)
+            </label>
+            <div className="flex items-center gap-3 mt-2">
+              <input
+                type="checkbox"
+                name="isFlashCard"
+                checked={formData.isFlashCard}
+                onChange={(e) => setFormData({ ...formData, isFlashCard: e.target.checked })}
+                className="w-4 h-4 text-yellow-600 border-gray-300 rounded focus:ring-yellow-500"
+              />
+              <span className="text-sm text-gray-600">
+                Mark as flash card (Golden card shown first)
+              </span>
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Event Marker (Auto-detected)
+            </label>
+            <div className="flex gap-2">
+              <input
+                type="text"
+                name="eventMarker"
+                value={formData.eventMarker}
+                readOnly
+                placeholder="Click 'Check Events' to auto-detect"
+                className="flex-1 px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-700"
+              />
+              <button
+                type="button"
+                onClick={() => fetchStockEvents(formData.scriptName)}
+                disabled={!formData.scriptName || fetchingEvents}
+                className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 whitespace-nowrap"
+              >
+                <RefreshCw className={`w-4 h-4 ${fetchingEvents ? 'animate-spin' : ''}`} />
+                {fetchingEvents ? 'Checking...' : 'Check Events'}
+              </button>
+            </div>
+            <p className="text-xs text-gray-500 mt-1">
+              Automatically detects bonus, split, dividend, and earnings events
+            </p>
           </div>
         </div>
 

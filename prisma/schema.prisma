@@ -30,8 +30,13 @@ model TradingCall {
   support         Float?
   resistance      Float?
 
+  // Trade classification
+  tradeType       String   @default("SWING") // SWING or LONG_TERM
+  isFlashCard     Boolean  @default(false)   // Golden flash cards shown first
+  eventMarker     String?                    // E for bonus/split/dividend events
+
   // Status tracking
-  status          String   @default("ACTIVE") // ACTIVE, TARGET1_HIT, TARGET2_HIT, TARGET3_HIT, SL_HIT
+  status          String   @default("ACTIVE") // ACTIVE, TARGET1_HIT, TARGET2_HIT, TARGET3_HIT, SL_HIT, EXPIRED
   currentPrice    Float?
   lastChecked     DateTime?
 
@@ -50,6 +55,7 @@ model TradingCall {
 
   @@index([callDate])
   @@index([status])
+  @@index([tradeType])
 }
 
 model AppConfig {
@@ -57,4 +63,36 @@ model AppConfig {
   key             String   @unique
   value           String
   updatedAt       DateTime @updatedAt
+}
+
+model User {
+  id                String    @id @default(uuid())
+  username          String    @unique
+  password          String    // Hashed password
+  email             String    @unique
+  fullName          String
+  phone             String?
+
+  // Approval status
+  status            String    @default("PENDING") // PENDING, APPROVED, REJECTED
+
+  // Subscription management
+  isActive          Boolean   @default(false) // Activated only after admin approval
+  subscriptionStart DateTime?
+  subscriptionEnd   DateTime?
+
+  // Metadata
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  approvedBy        String?   // Admin who approved
+  approvedAt        DateTime?
+  lastLogin         DateTime?
+
+  // Notes for admin
+  notes             String?
+
+  @@index([username])
+  @@index([email])
+  @@index([status])
+  @@index([subscriptionEnd])
 }
