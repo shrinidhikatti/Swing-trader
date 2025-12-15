@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import CallCard from '@/components/CallCard'
 import CallEntryForm from '@/components/CallEntryForm'
+import PublicPreview from '@/components/PublicPreview'
 import { Calendar, RefreshCw, Settings, TrendingUp, LogIn, LogOut, Shield, Users, User } from 'lucide-react'
 
 interface TradingCall {
@@ -52,6 +53,8 @@ export default function Home() {
   const [nextRefresh, setNextRefresh] = useState<number>(15 * 60) // 15 minutes in seconds
   const [autoRefreshEnabled, setAutoRefreshEnabled] = useState(true)
   const [currentPage, setCurrentPage] = useState(1)
+  const [previewCalls, setPreviewCalls] = useState<TradingCall[]>([])
+  const [authCheckComplete, setAuthCheckComplete] = useState(false)
   const CALLS_PER_PAGE = 15
 
   // Scroll to top when page changes
@@ -62,10 +65,21 @@ export default function Home() {
 
   useEffect(() => {
     checkAuth()
-    fetchCalls()
-    fetchLastChecked()
-    setCurrentPage(1) // Reset to page 1 when filters change
-  }, [fromDate, toDate, filterStatus])
+  }, [])
+
+  useEffect(() => {
+    if (authCheckComplete) {
+      if (isAdmin || isUser) {
+        // Logged-in users - fetch full call list
+        fetchCalls()
+        fetchLastChecked()
+      } else {
+        // Non-logged-in users - fetch preview calls
+        fetchPreviewCalls()
+      }
+      setCurrentPage(1) // Reset to page 1 when filters change
+    }
+  }, [authCheckComplete, fromDate, toDate, filterStatus])
 
   // Auto-refresh countdown timer (every second)
   useEffect(() => {
@@ -119,8 +133,29 @@ export default function Home() {
       setIsAdmin(data.authenticated && data.user?.isAdmin)
       setIsUser(data.authenticated && !data.user?.isAdmin)
       setUsername(data.user?.username || null)
+      setAuthCheckComplete(true)
     } catch (error) {
       console.error('Error checking auth:', error)
+      setAuthCheckComplete(true)
+    }
+  }
+
+  const fetchPreviewCalls = async () => {
+    try {
+      setLoading(true)
+      const response = await fetch('/api/public-preview')
+      const data = await response.json()
+
+      if (data.success && Array.isArray(data.calls)) {
+        setPreviewCalls(data.calls)
+      } else {
+        setPreviewCalls([])
+      }
+    } catch (error) {
+      console.error('Error fetching preview calls:', error)
+      setPreviewCalls([])
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -291,6 +326,21 @@ export default function Home() {
     active: calls.filter(c => c.status === 'ACTIVE').length,
     targets: calls.filter(c => c.target1Hit || c.target2Hit || c.target3Hit).length,
     stopLoss: calls.filter(c => c.stopLossHit).length,
+  }
+
+  // Show public preview for non-logged-in users
+  if (authCheckComplete && !isAdmin && !isUser) {
+    if (loading) {
+      return (
+        <main className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 flex items-center justify-center">
+          <div className="text-center">
+            <RefreshCw className="w-12 h-12 animate-spin mx-auto text-blue-600 mb-4" />
+            <p className="text-gray-600">Loading preview...</p>
+          </div>
+        </main>
+      )
+    }
+    return <PublicPreview calls={previewCalls} />
   }
 
   return (
@@ -624,6 +674,26 @@ export default function Home() {
           </>
         )}
       </div>
+
+      {/* Footer */}
+      <footer className="bg-gradient-to-r from-slate-800 via-slate-900 to-slate-800 text-white py-8 mt-16">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="text-center md:text-left">
+              <p className="text-slate-300 text-sm">
+                © 2024 Swing Trade. All rights reserved.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-2 text-sm">
+              <span className="text-slate-400">Designed & Developed by</span>
+              <span className="font-semibold bg-gradient-to-r from-blue-400 to-emerald-400 bg-clip-text text-transparent">
+                Shrinidhi Katti
+              </span>
+            </div>
+          </div>
+        </div>
+      </footer>
     </main>
   )
 }

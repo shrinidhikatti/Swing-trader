@@ -39,6 +39,21 @@ interface CallCardProps {
 }
 
 export default function CallCard({ call, onDelete }: CallCardProps) {
+  // Get full pattern name
+  const getPatternFullName = (pattern: string) => {
+    const patternMap: Record<string, string> = {
+      'TR': 'Triangle',
+      'UB': 'Uptrend Breakout',
+      'BF': 'Bull Flag',
+      'BO': 'Breakout',
+      'H&S': 'Head & Shoulders',
+      'DB': 'Double Bottom',
+      'TB': 'Triple Bottom',
+      'Other': 'Other'
+    }
+    return patternMap[pattern] || pattern
+  }
+
   // Calculate time duration from call date to a specific hit date
   const calculateDuration = (hitDateStr: string | null) => {
     if (!hitDateStr) return null
@@ -240,7 +255,7 @@ export default function CallCard({ call, onDelete }: CallCardProps) {
 
       <div className="flex flex-wrap gap-2 text-xs">
         <span className="px-2 py-1 bg-gray-100 rounded">
-          Pattern: <strong>{call.patternType}</strong>
+          Pattern: <strong>{getPatternFullName(call.patternType)}</strong>
         </span>
         {call.support && (
           <span className="px-2 py-1 bg-blue-50 rounded">

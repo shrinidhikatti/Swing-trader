@@ -26,7 +26,16 @@ interface CallEntryFormProps {
   onSubmit: (data: CallFormData) => Promise<void>
 }
 
-const PATTERN_TYPES = ['TR', 'UB', 'BF', 'BO', 'H&S', 'DB', 'TB', 'Other']
+const PATTERN_TYPES = [
+  { value: 'TR', label: 'Triangle' },
+  { value: 'UB', label: 'Uptrend Breakout' },
+  { value: 'BF', label: 'Bull Flag' },
+  { value: 'BO', label: 'Breakout' },
+  { value: 'H&S', label: 'Head & Shoulders' },
+  { value: 'DB', label: 'Double Bottom' },
+  { value: 'TB', label: 'Triple Bottom' },
+  { value: 'Other', label: 'Other' },
+]
 
 export default function CallEntryForm({ onSubmit }: CallEntryFormProps) {
   const [isOpen, setIsOpen] = useState(false)
@@ -285,7 +294,7 @@ export default function CallEntryForm({ onSubmit }: CallEntryFormProps) {
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
               {PATTERN_TYPES.map(type => (
-                <option key={type} value={type}>{type}</option>
+                <option key={type.value} value={type.value}>{type.label}</option>
               ))}
             </select>
           </div>
