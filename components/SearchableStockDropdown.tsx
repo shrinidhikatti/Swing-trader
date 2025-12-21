@@ -18,12 +18,37 @@ export default function SearchableStockDropdown({
   const [isOpen, setIsOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const [highlightedIndex, setHighlightedIndex] = useState(0)
+  const [stocks, setStocks] = useState<string[]>(NSE_STOCKS)
+  const [loading, setLoading] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
   const listRef = useRef<HTMLDivElement>(null)
 
+  // Fetch stocks from API on component mount
+  useEffect(() => {
+    const fetchStocks = async () => {
+      try {
+        setLoading(true)
+        const response = await fetch('/api/nse-stocks')
+        const data = await response.json()
+
+        if (data.success && data.stocks && data.stocks.length > 0) {
+          setStocks(data.stocks)
+          console.log(`Loaded ${data.count} stocks from ${data.source}`)
+        }
+      } catch (error) {
+        console.error('Error fetching stocks, using cached list:', error)
+        // Keep using the default NSE_STOCKS
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchStocks()
+  }, [])
+
   // Filter stocks based on search query
-  const filteredStocks = NSE_STOCKS.filter((stock) =>
+  const filteredStocks = stocks.filter((stock) =>
     stock.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
@@ -134,9 +159,10 @@ export default function SearchableStockDropdown({
               }}
               onFocus={() => setIsOpen(true)}
               onKeyDown={handleKeyDown}
-              placeholder="Search NSE stocks (e.g., RELIANCE, TCS)"
+              placeholder={loading ? "Loading NSE stocks..." : "Search NSE stocks (e.g., RELIANCE, TCS)"}
               required={required && !value}
-              className="w-full pl-10 pr-10 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              disabled={loading}
+              className="w-full pl-10 pr-10 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50"
             />
             {value && (
               <button
