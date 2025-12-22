@@ -160,6 +160,7 @@ export default function CallEntryForm({ onSubmit }: CallEntryFormProps) {
         patternType: 'TR',
         longTermOutlook: '',
         rank: '',
+        topPick: '',
         support: '',
         resistance: '',
         callDate: new Date().toISOString().split('T')[0],
