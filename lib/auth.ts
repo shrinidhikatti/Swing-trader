@@ -46,7 +46,25 @@ export async function createUserSession(username: string, userId: string): Promi
 export async function verifySession(token: string): Promise<SessionData | null> {
   try {
     const verified = await jwtVerify(token, secret)
-    return verified.payload as SessionData
+    const payload = verified.payload
+
+    // Type guard to ensure payload has required properties
+    if (
+      typeof payload.username === 'string' &&
+      typeof payload.isAdmin === 'boolean' &&
+      typeof payload.iat === 'number' &&
+      typeof payload.exp === 'number'
+    ) {
+      return {
+        username: payload.username,
+        isAdmin: payload.isAdmin,
+        userId: typeof payload.userId === 'string' ? payload.userId : undefined,
+        iat: payload.iat,
+        exp: payload.exp,
+      }
+    }
+
+    return null
   } catch (error) {
     return null
   }
