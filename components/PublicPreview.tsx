@@ -66,7 +66,7 @@ export default function PublicPreview({ calls }: PublicPreviewProps) {
             </div>
             <div className="flex items-center gap-3">
               <button
-                onClick={() => router.push('/user-login')}
+                onClick={() => router.push('/login')}
                 className="px-4 py-2 text-sm font-medium text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-md transition-colors"
               >
                 Login
@@ -233,10 +233,10 @@ export default function PublicPreview({ calls }: PublicPreviewProps) {
               onClick={() => router.push('/register')}
               className="bg-white text-orange-600 px-8 py-4 rounded-lg font-bold text-lg hover:bg-orange-50 transition-colors shadow-lg transform hover:scale-105"
             >
-              Register Now - It's Free!
+              Register Now
             </button>
             <button
-              onClick={() => router.push('/user-login')}
+              onClick={() => router.push('/login')}
               className="bg-transparent border-2 border-white text-white px-8 py-4 rounded-lg font-bold text-lg hover:bg-white hover:text-orange-600 transition-colors"
             >
               Already a Member? Login

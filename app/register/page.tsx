@@ -83,7 +83,7 @@ export default function RegisterPage() {
             You will receive access once the admin approves your registration.
           </p>
           <button
-            onClick={() => router.push('/user-login')}
+            onClick={() => router.push('/login')}
             className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors font-medium"
           >
             Go to Login
@@ -175,7 +175,7 @@ export default function RegisterPage() {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Phone (Optional)
+              Phone <span className="text-red-500">*</span>
             </label>
             <div className="relative">
               <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -184,6 +184,7 @@ export default function RegisterPage() {
                 name="phone"
                 value={formData.phone}
                 onChange={handleChange}
+                required
                 className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="+91 1234567890"
               />
@@ -240,7 +241,7 @@ export default function RegisterPage() {
           <p className="text-sm text-gray-600">
             Already have an account?{' '}
             <button
-              onClick={() => router.push('/user-login')}
+              onClick={() => router.push('/login')}
               className="text-blue-600 hover:text-blue-800 font-medium"
             >
               Login here

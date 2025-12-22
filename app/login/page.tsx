@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Lock, TrendingUp, AlertCircle } from 'lucide-react'
+import { Lock, TrendingUp, AlertCircle, ArrowLeft } from 'lucide-react'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -17,19 +17,36 @@ export default function LoginPage() {
     setLoading(true)
 
     try {
-      const response = await fetch('/api/auth/login', {
+      // First try admin login
+      const adminResponse = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password }),
       })
 
-      const data = await response.json()
+      if (adminResponse.ok) {
+        // Admin login successful
+        router.push('/')
+        router.refresh()
+        return
+      }
 
-      if (response.ok) {
+      // If admin login fails, try user login
+      const userResponse = await fetch('/api/users/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password }),
+      })
+
+      const userData = await userResponse.json()
+
+      if (userResponse.ok) {
+        // User login successful
         router.push('/')
         router.refresh()
       } else {
-        setError(data.error || 'Login failed')
+        // Both failed - show error
+        setError(userData.error || 'Invalid username or password')
       }
     } catch (error) {
       setError('An error occurred during login')
@@ -41,15 +58,23 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center px-4">
       <div className="max-w-md w-full">
+        <button
+          onClick={() => router.push('/')}
+          className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-6 text-sm"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Back to Home
+        </button>
+
         {/* Logo & Title */}
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-3 mb-4">
             <TrendingUp className="w-12 h-12 text-blue-600" />
           </div>
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Swing Trader Sagar
+            Swing Trade Pro
           </h1>
-          <p className="text-gray-600">Admin Login</p>
+          <p className="text-gray-600">Sign in to your account</p>
         </div>
 
         {/* Login Card */}
@@ -74,7 +99,7 @@ export default function LoginPage() {
                 htmlFor="username"
                 className="block text-sm font-medium text-gray-700 mb-1"
               >
-                Username
+                Username or Email
               </label>
               <input
                 type="text"
@@ -83,7 +108,7 @@ export default function LoginPage() {
                 onChange={(e) => setUsername(e.target.value)}
                 required
                 className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Enter your username"
+                placeholder="Enter your username or email"
                 disabled={loading}
               />
             </div>

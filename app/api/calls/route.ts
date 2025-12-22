@@ -15,12 +15,22 @@ export async function GET(request: NextRequest) {
 
     const where: any = {}
 
-    // TEMPORARILY DISABLED - Show all calls for testing
-    // TODO: Re-enable 30-day filtering after testing
+    // Hide future-dated calls for non-admin users
+    // Admin can see all calls including scheduled future calls
+    if (!isAdmin) {
+      const now = new Date()
+      now.setHours(0, 0, 0, 0) // Set to start of today
 
-    // Date range filter
+      where.callDate = {
+        lte: now, // Only show calls with callDate <= today
+      }
+    }
+
+    // Date range filter (for manual filtering by users)
     if (fromDate || toDate) {
-      where.callDate = {}
+      if (!where.callDate) {
+        where.callDate = {}
+      }
 
       if (fromDate) {
         const start = new Date(fromDate)
@@ -81,6 +91,7 @@ export async function POST(request: NextRequest) {
       patternType,
       longTermOutlook,
       rank,
+      topPick,
       support,
       resistance,
       callDate,
@@ -108,6 +119,7 @@ export async function POST(request: NextRequest) {
         patternType,
         longTermOutlook,
         rank: rank ? parseInt(rank) : null,
+        topPick: topPick ? parseInt(topPick) : null,
         support: support ? parseFloat(support) : null,
         resistance: resistance ? parseFloat(resistance) : null,
         callDate: callDate ? new Date(callDate) : new Date(),

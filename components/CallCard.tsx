@@ -15,6 +15,7 @@ interface TradingCall {
   patternType: string
   longTermOutlook: string | null
   rank: number | null
+  topPick: number | null
   support: number | null
   resistance: number | null
   status: string
@@ -157,6 +158,11 @@ export default function CallCard({ call, onDelete }: CallCardProps) {
           {call.rank && (
             <p className="text-xs font-semibold text-blue-600 mt-0.5">
               Rank {call.rank}
+            </p>
+          )}
+          {call.topPick && (
+            <p className="text-xs font-bold text-amber-600 mt-0.5 flex items-center gap-1">
+              ⭐ Top Pick #{call.topPick}
             </p>
           )}
         </div>

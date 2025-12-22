@@ -27,6 +27,7 @@ model TradingCall {
   patternType     String   // TR, UB, BF, etc.
   longTermOutlook String?
   rank            Int?
+  topPick         Int?     // Top pick ranking (1, 2, 3, etc.)
   support         Float?
   resistance      Float?
 

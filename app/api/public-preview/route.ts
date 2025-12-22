@@ -7,13 +7,26 @@ import { prisma } from '@/lib/prisma'
  */
 export async function GET() {
   try {
+    // Only show calls that are not scheduled for the future
+    const now = new Date()
+    now.setHours(0, 0, 0, 0) // Set to start of today
+
     // Fetch recent calls where at least Target 1 was hit
     const successfulCalls = await prisma.tradingCall.findMany({
       where: {
-        OR: [
-          { target1Hit: true },
-          { target2Hit: true },
-          { target3Hit: true },
+        AND: [
+          {
+            callDate: {
+              lte: now, // Only show calls with callDate <= today
+            },
+          },
+          {
+            OR: [
+              { target1Hit: true },
+              { target2Hit: true },
+              { target3Hit: true },
+            ],
+          },
         ],
       },
       orderBy: {

@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import CallCard from '@/components/CallCard'
 import CallEntryForm from '@/components/CallEntryForm'
 import PublicPreview from '@/components/PublicPreview'
-import { Calendar, RefreshCw, Settings, TrendingUp, LogIn, LogOut, Shield, Users, User } from 'lucide-react'
+import { Calendar, RefreshCw, Settings, TrendingUp, LogIn, LogOut, Shield, Users, User, Database } from 'lucide-react'
 
 interface TradingCall {
   id: string
@@ -19,6 +19,7 @@ interface TradingCall {
   patternType: string
   longTermOutlook: string | null
   rank: number | null
+  topPick: number | null
   support: number | null
   resistance: number | null
   status: string
@@ -374,6 +375,13 @@ export default function Home() {
                     Manage Users
                   </button>
                   <button
+                    onClick={() => router.push('/database-viewer')}
+                    className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors text-sm font-medium"
+                  >
+                    <Database className="w-4 h-4" />
+                    Database
+                  </button>
+                  <button
                     onClick={handleLogout}
                     className="flex items-center gap-2 px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition-colors text-sm font-medium"
                   >
@@ -400,11 +408,11 @@ export default function Home() {
               ) : (
                 <>
                   <button
-                    onClick={() => router.push('/user-login')}
+                    onClick={() => router.push('/login')}
                     className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors text-sm font-medium"
                   >
                     <LogIn className="w-4 h-4" />
-                    User Login
+                    Login
                   </button>
                   <button
                     onClick={() => router.push('/register')}
@@ -412,13 +420,6 @@ export default function Home() {
                   >
                     <Users className="w-4 h-4" />
                     Register
-                  </button>
-                  <button
-                    onClick={() => router.push('/login')}
-                    className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-sm font-medium"
-                  >
-                    <Shield className="w-4 h-4" />
-                    Admin Login
                   </button>
                 </>
               )}

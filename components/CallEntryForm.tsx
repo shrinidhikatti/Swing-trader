@@ -14,6 +14,7 @@ interface CallFormData {
   patternType: string
   longTermOutlook: string
   rank: string
+  topPick: string
   support: string
   resistance: string
   callDate: string
@@ -54,6 +55,7 @@ export default function CallEntryForm({ onSubmit }: CallEntryFormProps) {
     patternType: 'TR',
     longTermOutlook: '',
     rank: '',
+    topPick: '',
     support: '',
     resistance: '',
     callDate: new Date().toISOString().split('T')[0],
@@ -424,6 +426,21 @@ export default function CallEntryForm({ onSubmit }: CallEntryFormProps) {
               placeholder="Optional (1-10)"
               min="1"
               max="10"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Top Pick
+            </label>
+            <input
+              type="number"
+              name="topPick"
+              value={formData.topPick}
+              onChange={handleChange}
+              placeholder="Optional (1, 2, 3...)"
+              min="1"
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
