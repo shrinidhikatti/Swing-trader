@@ -595,7 +595,7 @@ export default function Home() {
             <Calendar className="w-12 h-12 mx-auto text-gray-400 mb-3" />
             <p className="text-gray-600 mb-1">No trading calls found</p>
             <p className="text-sm text-gray-500">
-              {selectedDate || filterStatus !== 'all'
+              {fromDate || toDate || filterStatus !== 'all'
                 ? 'Try adjusting your filters'
                 : 'Add your first trading call to get started'}
             </p>
