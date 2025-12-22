@@ -341,7 +341,13 @@ export default function Home() {
         </main>
       )
     }
-    return <PublicPreview calls={previewCalls} />
+    // Convert string dates to Date objects for PublicPreview component
+    const previewCallsWithDates = previewCalls.map(call => ({
+      ...call,
+      callDate: new Date(call.callDate),
+      hitDate: call.hitDate ? new Date(call.hitDate) : null,
+    }))
+    return <PublicPreview calls={previewCallsWithDates} />
   }
 
   return (
