@@ -355,7 +355,7 @@ export default function CallEntryForm({ onSubmit }: CallEntryFormProps) {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Target 3 <span className="text-red-500">*</span>
+              Target 3 <span className="text-gray-400">(Optional)</span>
             </label>
             <input
               type="number"
@@ -363,7 +363,6 @@ export default function CallEntryForm({ onSubmit }: CallEntryFormProps) {
               name="target3"
               value={formData.target3}
               onChange={handleChange}
-              required
               placeholder="0.00"
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
             />

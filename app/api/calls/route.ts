@@ -101,7 +101,7 @@ export async function POST(request: NextRequest) {
     } = body
 
     // Validation
-    if (!scriptName || !ltp || !target1 || !target2 || !target3 || !stopLoss || !patternType) {
+    if (!scriptName || !ltp || !target1 || !target2 || !stopLoss || !patternType) {
       return NextResponse.json(
         { error: 'Missing required fields' },
         { status: 400 }
@@ -114,7 +114,7 @@ export async function POST(request: NextRequest) {
         ltp: parseFloat(ltp),
         target1: parseFloat(target1),
         target2: parseFloat(target2),
-        target3: parseFloat(target3),
+        target3: target3 ? parseFloat(target3) : null,
         stopLoss: parseFloat(stopLoss),
         patternType,
         longTermOutlook,

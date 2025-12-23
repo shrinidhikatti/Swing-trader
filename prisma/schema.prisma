@@ -20,7 +20,7 @@ model TradingCall {
   // Targets
   target1         Float
   target2         Float
-  target3         Float
+  target3         Float?
   stopLoss        Float
 
   // Additional info
