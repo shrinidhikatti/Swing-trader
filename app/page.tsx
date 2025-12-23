@@ -673,19 +673,9 @@ export default function Home() {
         </div>
 
         {/* Call Entry Form - Admin Only */}
-        {isAdmin ? (
+        {isAdmin && (
           <div className="mb-6">
             <CallEntryForm onSubmit={handleCreateCall} />
-          </div>
-        ) : (
-          <div className="mb-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
-            <p className="text-sm text-blue-800">
-              <LogIn className="w-4 h-4 inline mr-2" />
-              <a href="/login" className="font-medium underline hover:text-blue-900">
-                Login as admin
-              </a>
-              {' '}to add new trading calls
-            </p>
           </div>
         )}
 

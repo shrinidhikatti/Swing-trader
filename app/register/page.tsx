@@ -36,8 +36,19 @@ export default function RegisterPage() {
       return
     }
 
-    if (formData.password.length < 6) {
-      setError('Password must be at least 6 characters')
+    // Strong password validation
+    if (formData.password.length < 8) {
+      setError('Password must be at least 8 characters')
+      return
+    }
+
+    const hasUpperCase = /[A-Z]/.test(formData.password)
+    const hasLowerCase = /[a-z]/.test(formData.password)
+    const hasNumber = /[0-9]/.test(formData.password)
+    const hasSpecialChar = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(formData.password)
+
+    if (!hasUpperCase || !hasLowerCase || !hasNumber || !hasSpecialChar) {
+      setError('Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character')
       return
     }
 
