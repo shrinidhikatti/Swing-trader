@@ -10,7 +10,7 @@ interface TradingCall {
   currentPrice: number | null
   target1: number
   target2: number
-  target3: number
+  target3: number | null
   stopLoss: number
   patternType: string
   longTermOutlook: string | null
@@ -239,7 +239,7 @@ export default function CallCard({ call, onDelete }: CallCardProps) {
 
       <div className="border-t border-gray-200 pt-3 mb-3">
         <p className="text-xs font-medium text-gray-700 mb-2">Targets & Stop Loss</p>
-        <div className="grid grid-cols-4 gap-2 text-xs">
+        <div className={`grid ${call.target3 ? 'grid-cols-4' : 'grid-cols-3'} gap-2 text-xs`}>
           <div>
             <p className="text-gray-600">Target 1</p>
             <p className="font-semibold text-green-700">₹{call.target1.toFixed(2)}</p>
@@ -248,10 +248,12 @@ export default function CallCard({ call, onDelete }: CallCardProps) {
             <p className="text-gray-600">Target 2</p>
             <p className="font-semibold text-green-700">₹{call.target2.toFixed(2)}</p>
           </div>
-          <div>
-            <p className="text-gray-600">Target 3</p>
-            <p className="font-semibold text-green-700">₹{call.target3.toFixed(2)}</p>
-          </div>
+          {call.target3 && (
+            <div>
+              <p className="text-gray-600">Target 3</p>
+              <p className="font-semibold text-green-700">₹{call.target3.toFixed(2)}</p>
+            </div>
+          )}
           <div>
             <p className="text-gray-600">Stop Loss</p>
             <p className="font-semibold text-red-700">₹{call.stopLoss.toFixed(2)}</p>
