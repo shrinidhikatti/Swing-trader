@@ -28,14 +28,14 @@ interface CallEntryFormProps {
 }
 
 const PATTERN_TYPES = [
-  { value: 'TR', label: 'Triangle' },
-  { value: 'UB', label: 'Uptrend Breakout' },
-  { value: 'BF', label: 'Bull Flag' },
-  { value: 'BO', label: 'Breakout' },
-  { value: 'H&S', label: 'Head & Shoulders' },
-  { value: 'DB', label: 'Double Bottom' },
-  { value: 'TB', label: 'Triple Bottom' },
-  { value: 'Other', label: 'Other' },
+  { value: 'BO', label: 'BO - Breakout (price and volume)' },
+  { value: 'FO', label: 'FO - Flagout BO' },
+  { value: 'TR', label: 'TR - Trend Reversal BO' },
+  { value: 'TB', label: 'TB - Trend Broken' },
+  { value: 'UB', label: 'UB - Uptrend BO' },
+  { value: 'CB', label: 'CB - Cup and handle BO' },
+  { value: 'RB', label: 'RB - Rounding bottom BO' },
+  { value: 'BF', label: 'BF - Bullish engulf BO' },
 ]
 
 export default function CallEntryForm({ onSubmit }: CallEntryFormProps) {
@@ -45,6 +45,7 @@ export default function CallEntryForm({ onSubmit }: CallEntryFormProps) {
   const [fetchingEvents, setFetchingEvents] = useState(false)
   const [currentPrice, setCurrentPrice] = useState<number | null>(null)
   const [priceError, setPriceError] = useState<string | null>(null)
+  const [selectedPatterns, setSelectedPatterns] = useState<string[]>([])
   const [formData, setFormData] = useState<CallFormData>({
     scriptName: '',
     ltp: '',
@@ -52,7 +53,7 @@ export default function CallEntryForm({ onSubmit }: CallEntryFormProps) {
     target2: '',
     target3: '',
     stopLoss: '',
-    patternType: 'TR',
+    patternType: '',
     longTermOutlook: '',
     rank: '',
     topPick: '',
@@ -68,6 +69,18 @@ export default function CallEntryForm({ onSubmit }: CallEntryFormProps) {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
+    })
+  }
+
+  const handlePatternToggle = (patternValue: string) => {
+    setSelectedPatterns(prev => {
+      if (prev.includes(patternValue)) {
+        // Remove pattern
+        return prev.filter(p => p !== patternValue)
+      } else {
+        // Add pattern
+        return [...prev, patternValue]
+      }
     })
   }
 
@@ -145,10 +158,24 @@ export default function CallEntryForm({ onSubmit }: CallEntryFormProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+
+    // Validate at least one pattern is selected
+    if (selectedPatterns.length === 0) {
+      alert('Please select at least one pattern type')
+      return
+    }
+
     setIsSubmitting(true)
 
     try {
-      await onSubmit(formData)
+      // Join selected patterns with "+" separator
+      const patternTypeValue = selectedPatterns.join('+')
+
+      await onSubmit({
+        ...formData,
+        patternType: patternTypeValue
+      })
+
       // Reset form
       setFormData({
         scriptName: '',
@@ -157,7 +184,7 @@ export default function CallEntryForm({ onSubmit }: CallEntryFormProps) {
         target2: '',
         target3: '',
         stopLoss: '',
-        patternType: 'TR',
+        patternType: '',
         longTermOutlook: '',
         rank: '',
         topPick: '',
@@ -168,6 +195,7 @@ export default function CallEntryForm({ onSubmit }: CallEntryFormProps) {
         isFlashCard: false,
         eventMarker: '',
       })
+      setSelectedPatterns([])
       setCurrentPrice(null)
       setPriceError(null)
       setIsOpen(false)
@@ -285,21 +313,35 @@ export default function CallEntryForm({ onSubmit }: CallEntryFormProps) {
             </p>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+          <div className="md:col-span-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               Pattern Type <span className="text-red-500">*</span>
+              <span className="text-xs text-gray-500 ml-2">(Select one or more)</span>
             </label>
-            <select
-              name="patternType"
-              value={formData.patternType}
-              onChange={handleChange}
-              required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            >
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 p-3 border border-gray-300 rounded-md bg-gray-50">
               {PATTERN_TYPES.map(type => (
-                <option key={type.value} value={type.value}>{type.label}</option>
+                <div key={type.value} className="flex items-start">
+                  <input
+                    type="checkbox"
+                    id={`pattern-${type.value}`}
+                    checked={selectedPatterns.includes(type.value)}
+                    onChange={() => handlePatternToggle(type.value)}
+                    className="mt-1 w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                  />
+                  <label
+                    htmlFor={`pattern-${type.value}`}
+                    className="ml-2 text-sm text-gray-700 cursor-pointer select-none"
+                  >
+                    {type.label}
+                  </label>
+                </div>
               ))}
-            </select>
+            </div>
+            {selectedPatterns.length > 0 && (
+              <p className="text-xs text-green-600 mt-1">
+                Selected: {selectedPatterns.join(', ')}
+              </p>
+            )}
           </div>
 
           <div>

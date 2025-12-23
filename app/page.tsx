@@ -70,6 +70,28 @@ export default function Home() {
     checkAuth()
   }, [])
 
+  // Auto-logout at midnight
+  useEffect(() => {
+    const checkMidnight = setInterval(() => {
+      const now = new Date()
+      const hours = now.getHours()
+      const minutes = now.getMinutes()
+
+      // Check if it's midnight (00:00)
+      if (hours === 0 && minutes === 0) {
+        // Logout user
+        fetch('/api/auth/logout', { method: 'POST' })
+          .then(() => {
+            router.push('/login')
+            router.refresh()
+          })
+          .catch(console.error)
+      }
+    }, 60000) // Check every minute
+
+    return () => clearInterval(checkMidnight)
+  }, [router])
+
   useEffect(() => {
     if (authCheckComplete) {
       if (isAdmin || isUser) {

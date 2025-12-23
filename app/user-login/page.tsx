@@ -149,7 +149,7 @@ export default function UserLoginPage() {
           <div className="flex flex-col md:flex-row items-center justify-between gap-2">
             <div className="text-center md:text-left">
               <p className="text-slate-300 text-xs">
-                © 2024 Swing Trade. All rights reserved.
+                ©  2025 Swing Trader Sagar. All rights reserved.
               </p>
             </div>
 

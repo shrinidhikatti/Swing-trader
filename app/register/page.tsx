@@ -214,11 +214,14 @@ export default function RegisterPage() {
                 value={formData.password}
                 onChange={handleChange}
                 required
-                minLength={6}
+                minLength={8}
                 className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Min. 6 characters"
+                placeholder="Create a strong password"
               />
             </div>
+            <p className="text-xs text-gray-600 mt-1">
+              Must be at least 8 characters with one uppercase letter, one lowercase letter, one number, and one special character
+            </p>
           </div>
 
           <div>
@@ -267,7 +270,7 @@ export default function RegisterPage() {
           <div className="flex flex-col md:flex-row items-center justify-between gap-2">
             <div className="text-center md:text-left">
               <p className="text-slate-300 text-xs">
-                © 2024 Swing Trade. All rights reserved.
+                ©  2025 Swing Trader Sagar. All rights reserved.
               </p>
             </div>
 
