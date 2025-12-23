@@ -42,12 +42,27 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Check if user is approved
-    if (user.status !== 'APPROVED') {
-      return NextResponse.json(
-        { error: 'Your account is pending admin approval' },
-        { status: 403 }
-      )
+    // Check if we're past the free access period (Jan 1, 2026)
+    const now = new Date()
+    const accessCutoff = new Date('2026-01-01T00:00:00.000Z')
+    const isPastFreeAccess = now >= accessCutoff
+
+    // After Jan 1, 2026, all users (including previously auto-approved) need approval
+    if (isPastFreeAccess) {
+      if (user.status !== 'APPROVED') {
+        return NextResponse.json(
+          { error: 'Access requires admin approval. The free access period has ended. Please contact admin.' },
+          { status: 403 }
+        )
+      }
+    } else {
+      // Before Jan 1, 2026, check normal approval status
+      if (user.status !== 'APPROVED') {
+        return NextResponse.json(
+          { error: 'Your account is pending admin approval' },
+          { status: 403 }
+        )
+      }
     }
 
     // Check if user is active
@@ -59,7 +74,6 @@ export async function POST(request: NextRequest) {
     }
 
     // Check subscription validity
-    const now = new Date()
     if (user.subscriptionEnd && new Date(user.subscriptionEnd) < now) {
       return NextResponse.json(
         { error: 'Your subscription has expired. Please contact admin.' },

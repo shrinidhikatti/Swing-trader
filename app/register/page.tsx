@@ -17,6 +17,7 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
+  const [autoApproved, setAutoApproved] = useState(false)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -74,6 +75,7 @@ export default function RegisterPage() {
       }
 
       setSuccess(true)
+      setAutoApproved(data.autoApproved || false)
     } catch (err: any) {
       setError(err.message)
     } finally {
@@ -89,10 +91,26 @@ export default function RegisterPage() {
             <UserPlus className="w-8 h-8 text-green-600" />
           </div>
           <h2 className="text-2xl font-bold text-gray-900 mb-2">Registration Successful!</h2>
-          <p className="text-gray-600 mb-6">
-            Your account has been created and is pending admin approval.
-            You will receive access once the admin approves your registration.
-          </p>
+          {autoApproved ? (
+            <>
+              <p className="text-gray-600 mb-2">
+                Your account has been created and you now have <strong>full access</strong>!
+              </p>
+              <div className="bg-green-50 border border-green-200 rounded-lg p-3 mb-6">
+                <p className="text-sm text-green-800 font-medium">
+                  Free Access Period (Until Dec 31, 2025)
+                </p>
+                <p className="text-xs text-green-700 mt-1">
+                  You can login immediately and start using the platform.
+                </p>
+              </div>
+            </>
+          ) : (
+            <p className="text-gray-600 mb-6">
+              Your account has been created and is pending admin approval.
+              You will receive access once the admin approves your registration.
+            </p>
+          )}
           <button
             onClick={() => router.push('/login')}
             className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors font-medium"

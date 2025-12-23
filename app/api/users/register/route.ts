@@ -42,7 +42,16 @@ export async function POST(request: NextRequest) {
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 10)
 
-    // Create user with PENDING status
+    // Check if registration is before Jan 1, 2026 (free access period)
+    const now = new Date()
+    const freeAccessCutoff = new Date('2026-01-01T00:00:00.000Z')
+    const isFreeAccessPeriod = now < freeAccessCutoff
+
+    // Auto-approve users during free access period (before Jan 1, 2026)
+    const status = isFreeAccessPeriod ? 'APPROVED' : 'PENDING'
+    const isActive = isFreeAccessPeriod
+
+    // Create user
     const user = await prisma.user.create({
       data: {
         username,
@@ -50,15 +59,20 @@ export async function POST(request: NextRequest) {
         fullName,
         phone: phone || null,
         password: hashedPassword,
-        status: 'PENDING',
-        isActive: false,
+        status,
+        isActive,
       },
     })
 
+    const message = isFreeAccessPeriod
+      ? 'Registration successful! You now have full access. (Free access period until Dec 31, 2025)'
+      : 'Registration successful. Awaiting admin approval.'
+
     return NextResponse.json(
       {
-        message: 'Registration successful. Awaiting admin approval.',
+        message,
         userId: user.id,
+        autoApproved: isFreeAccessPeriod,
       },
       { status: 201 }
     )
