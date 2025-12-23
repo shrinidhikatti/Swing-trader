@@ -5,7 +5,8 @@ import { useRouter } from 'next/navigation'
 import CallCard from '@/components/CallCard'
 import CallEntryForm from '@/components/CallEntryForm'
 import PublicPreview from '@/components/PublicPreview'
-import { Calendar, RefreshCw, Settings, TrendingUp, LogIn, LogOut, Shield, Users, User, Database } from 'lucide-react'
+import Disclaimer from '@/components/Disclaimer'
+import { Calendar, RefreshCw, Settings, TrendingUp, LogIn, LogOut, Shield, Users, User, Database, Menu, X } from 'lucide-react'
 
 interface TradingCall {
   id: string
@@ -56,6 +57,7 @@ export default function Home() {
   const [currentPage, setCurrentPage] = useState(1)
   const [previewCalls, setPreviewCalls] = useState<TradingCall[]>([])
   const [authCheckComplete, setAuthCheckComplete] = useState(false)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const CALLS_PER_PAGE = 15
 
   // Scroll to top when page changes
@@ -364,7 +366,8 @@ export default function Home() {
               <p className="text-gray-600">Trading Calls Management System</p>
             </div>
 
-            <div className="flex items-center gap-3">
+            {/* Desktop Navigation */}
+            <div className="hidden md:flex items-center gap-3">
               {isAdmin ? (
                 <>
                   <div className="flex items-center gap-2 px-3 py-2 bg-green-50 border border-green-200 rounded-md">
@@ -430,7 +433,109 @@ export default function Home() {
                 </>
               )}
             </div>
+
+            {/* Mobile Hamburger Menu */}
+            <div className="md:hidden">
+              <button
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="p-2 rounded-md bg-gray-100 hover:bg-gray-200 transition-colors"
+              >
+                {mobileMenuOpen ? (
+                  <X className="w-6 h-6 text-gray-700" />
+                ) : (
+                  <Menu className="w-6 h-6 text-gray-700" />
+                )}
+              </button>
+            </div>
           </div>
+
+          {/* Mobile Menu Dropdown */}
+          {mobileMenuOpen && (
+            <div className="md:hidden mt-4 pb-4 border-t border-gray-200 pt-4">
+              {isAdmin ? (
+                <div className="flex flex-col gap-3">
+                  <div className="flex items-center gap-2 px-3 py-2 bg-green-50 border border-green-200 rounded-md">
+                    <Shield className="w-4 h-4 text-green-600" />
+                    <span className="text-sm font-medium text-green-900">
+                      Admin: {username}
+                    </span>
+                  </div>
+                  <button
+                    onClick={() => {
+                      router.push('/manage-users')
+                      setMobileMenuOpen(false)
+                    }}
+                    className="flex items-center gap-2 px-4 py-3 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors text-sm font-medium w-full"
+                  >
+                    <Users className="w-4 h-4" />
+                    Manage Users
+                  </button>
+                  <button
+                    onClick={() => {
+                      router.push('/database-viewer')
+                      setMobileMenuOpen(false)
+                    }}
+                    className="flex items-center gap-2 px-4 py-3 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors text-sm font-medium w-full"
+                  >
+                    <Database className="w-4 h-4" />
+                    Database
+                  </button>
+                  <button
+                    onClick={() => {
+                      handleLogout()
+                      setMobileMenuOpen(false)
+                    }}
+                    className="flex items-center gap-2 px-4 py-3 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition-colors text-sm font-medium w-full"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    Logout
+                  </button>
+                </div>
+              ) : isUser ? (
+                <div className="flex flex-col gap-3">
+                  <div className="flex items-center gap-2 px-3 py-2 bg-blue-50 border border-blue-200 rounded-md">
+                    <User className="w-4 h-4 text-blue-600" />
+                    <span className="text-sm font-medium text-blue-900">
+                      {username}
+                    </span>
+                  </div>
+                  <button
+                    onClick={() => {
+                      handleLogout()
+                      setMobileMenuOpen(false)
+                    }}
+                    className="flex items-center gap-2 px-4 py-3 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition-colors text-sm font-medium w-full"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    Logout
+                  </button>
+                </div>
+              ) : (
+                <div className="flex flex-col gap-3">
+                  <button
+                    onClick={() => {
+                      router.push('/login')
+                      setMobileMenuOpen(false)
+                    }}
+                    className="flex items-center gap-2 px-4 py-3 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors text-sm font-medium w-full"
+                  >
+                    <LogIn className="w-4 h-4" />
+                    Login
+                  </button>
+                  <button
+                    onClick={() => {
+                      router.push('/register')
+                      setMobileMenuOpen(false)
+                    }}
+                    className="flex items-center gap-2 px-4 py-3 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors text-sm font-medium w-full"
+                  >
+                    <Users className="w-4 h-4" />
+                    Register
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Stats Cards */}
@@ -682,13 +787,18 @@ export default function Home() {
         )}
       </div>
 
+      {/* Disclaimer Section */}
+      <div className="max-w-7xl mx-auto px-4 mt-12">
+        <Disclaimer />
+      </div>
+
       {/* Footer */}
       <footer className="bg-gradient-to-r from-slate-800 via-slate-900 to-slate-800 text-white py-8 mt-16">
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="text-center md:text-left">
               <p className="text-slate-300 text-sm">
-                © 2024 Swing Trade. All rights reserved.
+                © 2025 Swing Trader Sagar. All rights reserved.
               </p>
             </div>
 
