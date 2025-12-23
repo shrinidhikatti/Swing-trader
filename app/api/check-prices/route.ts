@@ -97,7 +97,7 @@ export async function POST(request: NextRequest) {
           } else {
             // Price is closer to high - Target hit first
             // Check which target level
-            if (dayHigh >= call.target3) {
+            if (call.target3 && dayHigh >= call.target3) {
               status = 'TARGET3_HIT'
               target1Hit = true
               target2Hit = true
@@ -128,7 +128,7 @@ export async function POST(request: NextRequest) {
           stopLossHitDate = now
         } else if (targetHit) {
           // Only target hit (no SL)
-          if (dayHigh >= call.target3) {
+          if (call.target3 && dayHigh >= call.target3) {
             status = 'TARGET3_HIT'
             target1Hit = true
             target2Hit = true
@@ -156,7 +156,7 @@ export async function POST(request: NextRequest) {
         // Keep existing status
       } else {
         // Some targets already hit - check for higher targets only
-        if (!call.target3Hit && dayHigh >= call.target3) {
+        if (!call.target3Hit && call.target3 && dayHigh >= call.target3) {
           status = 'TARGET3_HIT'
           target3Hit = true
           target3HitDate = target3HitDate || now
