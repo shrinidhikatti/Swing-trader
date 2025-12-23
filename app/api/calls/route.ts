@@ -131,10 +131,18 @@ export async function POST(request: NextRequest) {
     })
 
     return NextResponse.json(call, { status: 201 })
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error creating call:', error)
+    console.error('Error details:', {
+      message: error.message,
+      code: error.code,
+      meta: error.meta,
+    })
     return NextResponse.json(
-      { error: 'Failed to create trading call' },
+      {
+        error: 'Failed to create trading call',
+        details: error.message
+      },
       { status: 500 }
     )
   }
