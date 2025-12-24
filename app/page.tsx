@@ -6,7 +6,8 @@ import CallCard from '@/components/CallCard'
 import CallEntryForm from '@/components/CallEntryForm'
 import PublicPreview from '@/components/PublicPreview'
 import Disclaimer from '@/components/Disclaimer'
-import { Calendar, RefreshCw, Settings, TrendingUp, LogIn, LogOut, Shield, Users, User, Database, Menu, X } from 'lucide-react'
+import FAQModal from '@/components/FAQModal'
+import { Calendar, RefreshCw, Settings, TrendingUp, LogIn, LogOut, Shield, Users, User, Database, Menu, X, HelpCircle } from 'lucide-react'
 
 interface TradingCall {
   id: string
@@ -58,6 +59,7 @@ export default function Home() {
   const [previewCalls, setPreviewCalls] = useState<TradingCall[]>([])
   const [authCheckComplete, setAuthCheckComplete] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [showFAQ, setShowFAQ] = useState(false)
   const CALLS_PER_PAGE = 15
 
   // Scroll to top when page changes
@@ -436,6 +438,13 @@ export default function Home() {
                     Database
                   </button>
                   <button
+                    onClick={() => setShowFAQ(true)}
+                    className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors text-sm font-medium"
+                  >
+                    <HelpCircle className="w-4 h-4" />
+                    FAQ
+                  </button>
+                  <button
                     onClick={handleLogout}
                     className="flex items-center gap-2 px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition-colors text-sm font-medium"
                   >
@@ -451,6 +460,13 @@ export default function Home() {
                       {username}
                     </span>
                   </div>
+                  <button
+                    onClick={() => setShowFAQ(true)}
+                    className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors text-sm font-medium"
+                  >
+                    <HelpCircle className="w-4 h-4" />
+                    FAQ
+                  </button>
                   <button
                     onClick={handleLogout}
                     className="flex items-center gap-2 px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition-colors text-sm font-medium"
@@ -527,6 +543,16 @@ export default function Home() {
                   </button>
                   <button
                     onClick={() => {
+                      setShowFAQ(true)
+                      setMobileMenuOpen(false)
+                    }}
+                    className="flex items-center gap-2 px-4 py-3 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors text-sm font-medium w-full"
+                  >
+                    <HelpCircle className="w-4 h-4" />
+                    FAQ
+                  </button>
+                  <button
+                    onClick={() => {
                       handleLogout()
                       setMobileMenuOpen(false)
                     }}
@@ -544,6 +570,16 @@ export default function Home() {
                       {username}
                     </span>
                   </div>
+                  <button
+                    onClick={() => {
+                      setShowFAQ(true)
+                      setMobileMenuOpen(false)
+                    }}
+                    className="flex items-center gap-2 px-4 py-3 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors text-sm font-medium w-full"
+                  >
+                    <HelpCircle className="w-4 h-4" />
+                    FAQ
+                  </button>
                   <button
                     onClick={() => {
                       handleLogout()
@@ -846,6 +882,9 @@ export default function Home() {
           </div>
         </div>
       </footer>
+
+      {/* FAQ Modal */}
+      <FAQModal isOpen={showFAQ} onClose={() => setShowFAQ(false)} />
     </main>
   )
 }
