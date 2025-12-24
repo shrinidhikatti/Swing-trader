@@ -3,6 +3,8 @@
 import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { UserPlus, Mail, User, Phone, Lock, ArrowLeft, Eye, EyeOff } from 'lucide-react'
+import LaunchCelebration from '@/components/LaunchCelebration'
+import { isLaunchDay } from '@/lib/launchDay'
 
 export default function RegisterPage() {
   const router = useRouter()
@@ -20,6 +22,7 @@ export default function RegisterPage() {
   const [autoApproved, setAutoApproved] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const [showCelebration, setShowCelebration] = useState(false)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -78,11 +81,24 @@ export default function RegisterPage() {
 
       setSuccess(true)
       setAutoApproved(data.autoApproved || false)
+
+      // Show celebration modal if it's launch day
+      if (isLaunchDay()) {
+        setShowCelebration(true)
+      }
     } catch (err: any) {
       setError(err.message)
     } finally {
       setLoading(false)
     }
+  }
+
+  const handleCelebrationClose = () => {
+    setShowCelebration(false)
+    // Redirect to login after celebration
+    setTimeout(() => {
+      router.push('/login')
+    }, 300)
   }
 
   if (success) {
@@ -325,6 +341,14 @@ export default function RegisterPage() {
           </div>
         </div>
       </footer>
+
+      {/* Launch Day Celebration Modal */}
+      <LaunchCelebration
+        isOpen={showCelebration}
+        onClose={handleCelebrationClose}
+        userName={formData.fullName}
+        isRegistration={true}
+      />
     </div>
   )
 }

@@ -3,6 +3,8 @@
 import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { LogIn, User, Lock, ArrowLeft } from 'lucide-react'
+import LaunchCelebration from '@/components/LaunchCelebration'
+import { isLaunchDay } from '@/lib/launchDay'
 
 export default function UserLoginPage() {
   const router = useRouter()
@@ -12,6 +14,8 @@ export default function UserLoginPage() {
   })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [showCelebration, setShowCelebration] = useState(false)
+  const [userName, setUserName] = useState('')
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -39,14 +43,29 @@ export default function UserLoginPage() {
         throw new Error(data.error || 'Login failed')
       }
 
-      // Redirect to homepage on successful login
-      router.push('/')
-      router.refresh()
+      // Show celebration modal if it's launch day
+      if (isLaunchDay()) {
+        setUserName(data.user?.fullName || data.user?.username || formData.username)
+        setShowCelebration(true)
+      } else {
+        // Redirect to homepage on successful login
+        router.push('/')
+        router.refresh()
+      }
     } catch (err: any) {
       setError(err.message)
     } finally {
       setLoading(false)
     }
+  }
+
+  const handleCelebrationClose = () => {
+    setShowCelebration(false)
+    // Redirect to homepage after celebration
+    setTimeout(() => {
+      router.push('/')
+      router.refresh()
+    }, 300)
   }
 
   return (
@@ -162,6 +181,14 @@ export default function UserLoginPage() {
           </div>
         </div>
       </footer>
+
+      {/* Launch Day Celebration Modal */}
+      <LaunchCelebration
+        isOpen={showCelebration}
+        onClose={handleCelebrationClose}
+        userName={userName}
+        isRegistration={false}
+      />
     </div>
   )
 }

@@ -3,6 +3,8 @@
 import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Lock, TrendingUp, AlertCircle, ArrowLeft } from 'lucide-react'
+import LaunchCelebration from '@/components/LaunchCelebration'
+import { isLaunchDay } from '@/lib/launchDay'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -10,6 +12,8 @@ export default function LoginPage() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [showCelebration, setShowCelebration] = useState(false)
+  const [userName, setUserName] = useState('')
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -26,8 +30,13 @@ export default function LoginPage() {
 
       if (adminResponse.ok) {
         // Admin login successful
-        router.push('/')
-        router.refresh()
+        if (isLaunchDay()) {
+          setUserName('Admin')
+          setShowCelebration(true)
+        } else {
+          router.push('/')
+          router.refresh()
+        }
         return
       }
 
@@ -42,8 +51,13 @@ export default function LoginPage() {
 
       if (userResponse.ok) {
         // User login successful
-        router.push('/')
-        router.refresh()
+        if (isLaunchDay()) {
+          setUserName(userData.user?.fullName || userData.user?.username || username)
+          setShowCelebration(true)
+        } else {
+          router.push('/')
+          router.refresh()
+        }
       } else {
         // Both failed - show error
         setError(userData.error || 'Invalid username or password')
@@ -53,6 +67,15 @@ export default function LoginPage() {
     } finally {
       setLoading(false)
     }
+  }
+
+  const handleCelebrationClose = () => {
+    setShowCelebration(false)
+    // Redirect to homepage after celebration
+    setTimeout(() => {
+      router.push('/')
+      router.refresh()
+    }, 300)
   }
 
   return (
@@ -175,6 +198,14 @@ export default function LoginPage() {
           </div>
         </div>
       </footer>
+
+      {/* Launch Day Celebration Modal */}
+      <LaunchCelebration
+        isOpen={showCelebration}
+        onClose={handleCelebrationClose}
+        userName={userName}
+        isRegistration={false}
+      />
     </div>
   )
 }
