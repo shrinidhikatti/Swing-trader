@@ -101,8 +101,9 @@ export default function Home() {
 
         // Auto-trigger price check for ALL users (with 15-min throttling on server)
         // Only trigger on initial load (no filters applied)
+        // Use silent=true to prevent alert popups
         if (!fromDate && !toDate && filterStatus === 'all') {
-          handleCheckPrices()
+          handleCheckPrices(true) // silent mode
         }
       } else {
         // Non-logged-in users - fetch preview calls
@@ -113,48 +114,46 @@ export default function Home() {
   }, [authCheckComplete, fromDate, toDate, filterStatus])
 
   // Auto-refresh countdown timer (every second)
+  // Calculate based on lastChecked timestamp, not arbitrary countdown
   useEffect(() => {
     if (!autoRefreshEnabled) return
 
     const countdown = setInterval(() => {
-      setNextRefresh((prev) => {
-        if (prev <= 1) {
-          // Time to refresh!
+      if (lastChecked) {
+        const lastCheckTime = new Date(lastChecked).getTime()
+        const now = Date.now()
+        const elapsed = now - lastCheckTime
+        const fifteenMinutes = 15 * 60 * 1000
+        const remaining = fifteenMinutes - elapsed
+
+        if (remaining <= 0) {
+          // Time to refresh! Try to update prices
           handleAutoRefresh()
-          return 15 * 60 // Reset to 15 minutes
+          setNextRefresh(0)
+        } else {
+          // Update countdown based on actual time remaining
+          setNextRefresh(Math.ceil(remaining / 1000))
         }
-        return prev - 1
-      })
+      } else {
+        // No lastChecked yet, keep countdown
+        setNextRefresh((prev) => {
+          if (prev <= 1) {
+            handleAutoRefresh()
+            return 15 * 60
+          }
+          return prev - 1
+        })
+      }
     }, 1000)
 
     return () => clearInterval(countdown)
-  }, [autoRefreshEnabled])
+  }, [autoRefreshEnabled, lastChecked])
 
   // Auto-refresh prices function (works for everyone, not just admin)
   const handleAutoRefresh = async () => {
     console.log('Auto-refreshing prices...')
-    try {
-      // Check if user is admin before making POST request
-      if (!isAdmin) {
-        console.log('Not admin, skipping price update API call')
-        // Just refresh the displayed data
-        await fetchCalls()
-        await fetchLastChecked()
-        return
-      }
-
-      const response = await fetch('/api/check-prices', {
-        method: 'POST',
-      })
-
-      if (response.ok) {
-        await fetchCalls()
-        await fetchLastChecked()
-        console.log('Auto-refresh complete')
-      }
-    } catch (error) {
-      console.error('Auto-refresh error:', error)
-    }
+    // Use the silent price check function (handles throttling automatically)
+    await handleCheckPrices(true)
   }
 
   const checkAuth = async () => {
@@ -240,35 +239,53 @@ export default function Home() {
     await fetchCalls()
   }
 
-  const handleCheckPrices = async () => {
-    if (!isAdmin) {
+  const handleCheckPrices = async (silent = false) => {
+    // Only admin can manually click the button
+    if (!silent && !isAdmin) {
       alert('Please login as admin to check prices')
       return
     }
 
     try {
-      setChecking(true)
+      if (!silent) setChecking(true)
+
       const response = await fetch('/api/check-prices', {
         method: 'POST',
       })
 
       if (response.status === 401) {
-        alert('Session expired. Please login again.')
-        router.push('/login')
+        if (!silent) {
+          alert('Session expired. Please login again.')
+          router.push('/login')
+        }
         return
       }
 
       const result = await response.json()
-      alert(`Price check complete! Updated ${result.updated} calls.`)
+
+      // Only show alert for manual checks (button click)
+      if (!silent) {
+        if (result.skipped) {
+          alert(`Prices were recently updated. Next check available in ${result.minutesRemaining} minutes.`)
+        } else {
+          alert(`Price check complete! Updated ${result.updated} calls.`)
+        }
+      }
+
       await fetchCalls()
       await fetchLastChecked()
+
       // Reset countdown timer after manual refresh
-      setNextRefresh(15 * 60)
+      if (!silent) {
+        setNextRefresh(15 * 60)
+      }
     } catch (error) {
       console.error('Error checking prices:', error)
-      alert('Failed to check prices')
+      if (!silent) {
+        alert('Failed to check prices')
+      }
     } finally {
-      setChecking(false)
+      if (!silent) setChecking(false)
     }
   }
 
@@ -641,7 +658,7 @@ export default function Home() {
             {isAdmin && (
               <div className="flex gap-2">
                 <button
-                  onClick={handleCheckPrices}
+                  onClick={() => handleCheckPrices(false)}
                   disabled={checking}
                   className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
                 >
