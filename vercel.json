@@ -1,11 +1,5 @@
 {
   "buildCommand": "prisma generate && prisma migrate deploy && next build",
   "installCommand": "npm install",
-  "framework": "nextjs",
-  "crons": [
-    {
-      "path": "/api/cron/update-prices",
-      "schedule": "*/15 * * * *"
-    }
-  ]
+  "framework": "nextjs"
 }

@@ -4,18 +4,40 @@ import { fetchStockPrice } from '@/lib/stockApi'
 import { isAuthenticatedFromRequest } from '@/lib/auth'
 
 /**
- * API endpoint to check and update prices for active trading calls (ADMIN ONLY)
- * This can be called manually or via cron job
+ * API endpoint to check and update prices for active trading calls
+ * Smart throttling: Only updates if last check was more than 15 minutes ago
+ * Available to all authenticated users
  */
 export async function POST(request: NextRequest) {
   try {
-    // Check authentication
-    const isAdmin = await isAuthenticatedFromRequest(request)
-    if (!isAdmin) {
-      return NextResponse.json(
-        { error: 'Unauthorized - Admin access required' },
-        { status: 401 }
-      )
+    // Check if last update was within 15 minutes (intelligent throttling)
+    const lastChecked = await prisma.tradingCall.findFirst({
+      where: {
+        lastChecked: { not: null },
+      },
+      orderBy: {
+        lastChecked: 'desc',
+      },
+      select: {
+        lastChecked: true,
+      },
+    })
+
+    if (lastChecked?.lastChecked) {
+      const now = new Date()
+      const timeSinceLastCheck = now.getTime() - lastChecked.lastChecked.getTime()
+      const fifteenMinutesInMs = 15 * 60 * 1000
+
+      if (timeSinceLastCheck < fifteenMinutesInMs) {
+        const minutesRemaining = Math.ceil((fifteenMinutesInMs - timeSinceLastCheck) / 60000)
+        return NextResponse.json({
+          message: 'Prices were recently updated',
+          skipped: true,
+          lastChecked: lastChecked.lastChecked,
+          nextCheckAvailable: new Date(lastChecked.lastChecked.getTime() + fifteenMinutesInMs),
+          minutesRemaining,
+        })
+      }
     }
 
     // Fetch all active calls (not yet hit targets or stop loss)

@@ -99,8 +99,9 @@ export default function Home() {
         fetchCalls()
         fetchLastChecked()
 
-        // Trigger price check if admin logs in (only once when auth completes)
-        if (isAdmin && !fromDate && !toDate && filterStatus === 'all') {
+        // Auto-trigger price check for ALL users (with 15-min throttling on server)
+        // Only trigger on initial load (no filters applied)
+        if (!fromDate && !toDate && filterStatus === 'all') {
           handleCheckPrices()
         }
       } else {
