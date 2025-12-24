@@ -98,6 +98,11 @@ export default function Home() {
         // Logged-in users - fetch full call list
         fetchCalls()
         fetchLastChecked()
+
+        // Trigger price check if admin logs in (only once when auth completes)
+        if (isAdmin && !fromDate && !toDate && filterStatus === 'all') {
+          handleCheckPrices()
+        }
       } else {
         // Non-logged-in users - fetch preview calls
         fetchPreviewCalls()
