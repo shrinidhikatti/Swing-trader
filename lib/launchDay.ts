@@ -13,7 +13,7 @@ export function isBeforeLaunch(): boolean {
   // For testing: true (shows countdown)
   // For production before launch: true (shows countdown)
   // On launch day at 1:00 PM: Change to false (shows normal website)
-  return false
+  return true
 
   // Alternative: Automatic time-based (use if you want automatic switching)
   // const now = new Date()
