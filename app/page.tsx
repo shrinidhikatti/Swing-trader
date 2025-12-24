@@ -5,8 +5,10 @@ import { useRouter } from 'next/navigation'
 import CallCard from '@/components/CallCard'
 import CallEntryForm from '@/components/CallEntryForm'
 import PublicPreview from '@/components/PublicPreview'
+import LaunchCountdown from '@/components/LaunchCountdown'
 import Disclaimer from '@/components/Disclaimer'
 import FAQModal from '@/components/FAQModal'
+import { isBeforeLaunch } from '@/lib/launchDay'
 import { Calendar, RefreshCw, Settings, TrendingUp, LogIn, LogOut, Shield, Users, User, Database, Menu, X, HelpCircle } from 'lucide-react'
 
 interface TradingCall {
@@ -376,6 +378,11 @@ export default function Home() {
     active: calls.filter(c => c.status === 'ACTIVE').length,
     targets: calls.filter(c => c.target1Hit || c.target2Hit || c.target3Hit).length,
     stopLoss: calls.filter(c => c.stopLossHit).length,
+  }
+
+  // Show countdown if before launch
+  if (isBeforeLaunch()) {
+    return <LaunchCountdown />
   }
 
   // Show public preview for non-logged-in users
