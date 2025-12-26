@@ -34,10 +34,12 @@ export default function SearchableStockDropdown({
 
         if (data.success && data.stocks && data.stocks.length > 0) {
           setStocks(data.stocks)
-          console.log(`Loaded ${data.count} stocks from ${data.source}`)
+          console.log(`✅ Successfully loaded ${data.count} stocks from ${data.source}`)
+        } else {
+          console.warn(`⚠️ API returned no stocks, using cached list of ${NSE_STOCKS.length} stocks`)
         }
       } catch (error) {
-        console.error('Error fetching stocks, using cached list:', error)
+        console.error('❌ Error fetching stocks, using cached list:', error)
         // Keep using the default NSE_STOCKS
       } finally {
         setLoading(false)
@@ -204,7 +206,7 @@ export default function SearchableStockDropdown({
 
           {searchQuery === '' && (
             <div className="px-4 py-2 text-xs text-gray-400 border-t border-gray-200 bg-gray-50">
-              Showing {filteredStocks.length} NSE stocks
+              Showing {stocks.length} NSE stocks
             </div>
           )}
         </div>

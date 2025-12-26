@@ -211,7 +211,7 @@ export default function CallEntryForm({ onSubmit }: CallEntryFormProps) {
     return (
       <button
         onClick={() => setIsOpen(true)}
-        className="w-full flex items-center justify-center gap-2 bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors font-medium"
+        className="w-full flex items-center justify-center gap-2 bg-blue-600 dark:bg-blue-700 text-white py-3 px-4 rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors font-medium"
       >
         <PlusCircle className="w-5 h-5" />
         Add New Trading Call
@@ -220,14 +220,14 @@ export default function CallEntryForm({ onSubmit }: CallEntryFormProps) {
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-lg p-6 border border-gray-200">
-      <h2 className="text-xl font-bold mb-4 text-gray-900">New Trading Call</h2>
+    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+      <h2 className="text-xl font-bold mb-4 text-gray-900 dark:text-white">New Trading Call</h2>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Script Name <span className="text-red-500">*</span>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
+              Script Name <span className="text-red-500 dark:text-red-400">*</span>
             </label>
             <SearchableStockDropdown
               value={formData.scriptName}
@@ -237,8 +237,8 @@ export default function CallEntryForm({ onSubmit }: CallEntryFormProps) {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Call Date <span className="text-red-500">*</span>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
+              Call Date <span className="text-red-500 dark:text-red-400">*</span>
             </label>
             <input
               type="date"
@@ -246,37 +246,37 @@ export default function CallEntryForm({ onSubmit }: CallEntryFormProps) {
               value={formData.callDate}
               onChange={handleChange}
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
 
           {/* Live Current Price Display */}
           {formData.scriptName && (
             <div className="md:col-span-2">
-              <div className="bg-gradient-to-r from-blue-50 to-green-50 border-2 border-blue-200 rounded-lg p-4">
+              <div className="bg-gradient-to-r from-blue-50 to-green-50 dark:from-blue-900/30 dark:to-green-900/30 border-2 border-blue-200 dark:border-blue-700 rounded-lg p-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <TrendingUp className="w-6 h-6 text-blue-600" />
+                    <TrendingUp className="w-6 h-6 text-blue-600 dark:text-blue-400" />
                     <div>
-                      <p className="text-sm font-medium text-gray-700">
+                      <p className="text-sm font-medium text-gray-700 dark:text-gray-200">
                         Current Market Price
                       </p>
                       {fetchingPrice ? (
                         <div className="flex items-center gap-2 mt-1">
-                          <RefreshCw className="w-4 h-4 animate-spin text-blue-600" />
-                          <span className="text-sm text-gray-600">Fetching live price...</span>
+                          <RefreshCw className="w-4 h-4 animate-spin text-blue-600 dark:text-blue-400" />
+                          <span className="text-sm text-gray-600 dark:text-gray-300">Fetching live price...</span>
                         </div>
                       ) : currentPrice ? (
                         <div className="flex items-center gap-2 mt-1">
-                          <span className="text-2xl font-bold text-green-600">
+                          <span className="text-2xl font-bold text-green-600 dark:text-green-400">
                             ₹{currentPrice.toFixed(2)}
                           </span>
-                          <span className="text-xs text-gray-500">
+                          <span className="text-xs text-gray-500 dark:text-gray-400">
                             {new Date().toLocaleTimeString('en-IN')}
                           </span>
                         </div>
                       ) : priceError ? (
-                        <p className="text-sm text-red-600 mt-1">{priceError}</p>
+                        <p className="text-sm text-red-600 dark:text-red-400 mt-1">{priceError}</p>
                       ) : null}
                     </div>
                   </div>
@@ -284,7 +284,7 @@ export default function CallEntryForm({ onSubmit }: CallEntryFormProps) {
                     type="button"
                     onClick={handleRefreshPrice}
                     disabled={fetchingPrice}
-                    className="flex items-center gap-2 px-3 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-sm font-medium disabled:opacity-50"
+                    className="flex items-center gap-2 px-3 py-2 bg-blue-600 dark:bg-blue-700 text-white rounded-md hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors text-sm font-medium disabled:opacity-50"
                   >
                     <RefreshCw className={`w-4 h-4 ${fetchingPrice ? 'animate-spin' : ''}`} />
                     Refresh
@@ -295,8 +295,8 @@ export default function CallEntryForm({ onSubmit }: CallEntryFormProps) {
           )}
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              LTP (Entry Price) <span className="text-red-500">*</span>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
+              LTP (Entry Price) <span className="text-red-500 dark:text-red-400">*</span>
             </label>
             <input
               type="number"
@@ -306,19 +306,19 @@ export default function CallEntryForm({ onSubmit }: CallEntryFormProps) {
               onChange={handleChange}
               required
               placeholder="Auto-filled from current price"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
               Auto-filled with current market price. You can edit if needed.
             </p>
           </div>
 
           <div className="md:col-span-2">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Pattern Type <span className="text-red-500">*</span>
-              <span className="text-xs text-gray-500 ml-2">(Select one or more)</span>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
+              Pattern Type <span className="text-red-500 dark:text-red-400">*</span>
+              <span className="text-xs text-gray-500 dark:text-gray-400 ml-2">(Select one or more)</span>
             </label>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 p-3 border border-gray-300 rounded-md bg-gray-50">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 p-3 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-700">
               {PATTERN_TYPES.map(type => (
                 <div key={type.value} className="flex items-start">
                   <input
@@ -326,11 +326,11 @@ export default function CallEntryForm({ onSubmit }: CallEntryFormProps) {
                     id={`pattern-${type.value}`}
                     checked={selectedPatterns.includes(type.value)}
                     onChange={() => handlePatternToggle(type.value)}
-                    className="mt-1 w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                    className="mt-1 w-4 h-4 text-blue-600 dark:text-blue-400 border-gray-300 dark:border-gray-600 rounded focus:ring-blue-500"
                   />
                   <label
                     htmlFor={`pattern-${type.value}`}
-                    className="ml-2 text-sm text-gray-700 cursor-pointer select-none"
+                    className="ml-2 text-sm text-gray-700 dark:text-gray-200 cursor-pointer select-none"
                   >
                     {type.label}
                   </label>
@@ -338,33 +338,33 @@ export default function CallEntryForm({ onSubmit }: CallEntryFormProps) {
               ))}
             </div>
             {selectedPatterns.length > 0 && (
-              <p className="text-xs text-green-600 mt-1">
+              <p className="text-xs text-green-600 dark:text-green-400 mt-1">
                 Selected: {selectedPatterns.join(', ')}
               </p>
             )}
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Trade Type <span className="text-red-500">*</span>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
+              Trade Type <span className="text-red-500 dark:text-red-400">*</span>
             </label>
             <select
               name="tradeType"
               value={formData.tradeType}
               onChange={handleChange}
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
               <option value="SWING">Swing Trade</option>
               <option value="LONG_TERM">Long Term</option>
             </select>
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
               Swing trades auto-expire after 30 days if no target/SL hit
             </p>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
               Target 1 <span className="text-red-500">*</span>
             </label>
             <input
@@ -375,12 +375,12 @@ export default function CallEntryForm({ onSubmit }: CallEntryFormProps) {
               onChange={handleChange}
               required
               placeholder="0.00"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
               Target 2 <span className="text-red-500">*</span>
             </label>
             <input
@@ -391,12 +391,12 @@ export default function CallEntryForm({ onSubmit }: CallEntryFormProps) {
               onChange={handleChange}
               required
               placeholder="0.00"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
               Target 3 <span className="text-gray-400">(Optional)</span>
             </label>
             <input
@@ -406,12 +406,12 @@ export default function CallEntryForm({ onSubmit }: CallEntryFormProps) {
               value={formData.target3}
               onChange={handleChange}
               placeholder="0.00"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
               Stop Loss <span className="text-red-500">*</span>
             </label>
             <input
@@ -422,12 +422,12 @@ export default function CallEntryForm({ onSubmit }: CallEntryFormProps) {
               onChange={handleChange}
               required
               placeholder="0.00"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-red-500 focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md focus:ring-2 focus:ring-red-500 focus:border-transparent"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
               Support Level
             </label>
             <input
@@ -437,12 +437,12 @@ export default function CallEntryForm({ onSubmit }: CallEntryFormProps) {
               value={formData.support}
               onChange={handleChange}
               placeholder="Optional"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
               Resistance Level
             </label>
             <input
@@ -452,12 +452,12 @@ export default function CallEntryForm({ onSubmit }: CallEntryFormProps) {
               value={formData.resistance}
               onChange={handleChange}
               placeholder="Optional"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
               Rank
             </label>
             <input
@@ -468,12 +468,12 @@ export default function CallEntryForm({ onSubmit }: CallEntryFormProps) {
               placeholder="Optional (1-10)"
               min="1"
               max="10"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
               Top Pick
             </label>
             <input
@@ -483,12 +483,12 @@ export default function CallEntryForm({ onSubmit }: CallEntryFormProps) {
               onChange={handleChange}
               placeholder="Optional (1, 2, 3...)"
               min="1"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
               Long Term Outlook
             </label>
             <input
@@ -497,12 +497,12 @@ export default function CallEntryForm({ onSubmit }: CallEntryFormProps) {
               value={formData.longTermOutlook}
               onChange={handleChange}
               placeholder="Bullish/Bearish/Neutral"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
               Flash Card (Internal News)
             </label>
             <div className="flex items-center gap-3 mt-2">
@@ -511,16 +511,16 @@ export default function CallEntryForm({ onSubmit }: CallEntryFormProps) {
                 name="isFlashCard"
                 checked={formData.isFlashCard}
                 onChange={(e) => setFormData({ ...formData, isFlashCard: e.target.checked })}
-                className="w-4 h-4 text-yellow-600 border-gray-300 rounded focus:ring-yellow-500"
+                className="w-4 h-4 text-yellow-600 dark:text-yellow-400 border-gray-300 dark:border-gray-600 rounded focus:ring-yellow-500"
               />
-              <span className="text-sm text-gray-600">
+              <span className="text-sm text-gray-600 dark:text-gray-300">
                 Mark as flash card (Golden card shown first)
               </span>
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
               Event Marker (Auto-detected)
             </label>
             <div className="flex gap-2">
@@ -530,19 +530,19 @@ export default function CallEntryForm({ onSubmit }: CallEntryFormProps) {
                 value={formData.eventMarker}
                 readOnly
                 placeholder="Click 'Check Events' to auto-detect"
-                className="flex-1 px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-700"
+                className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-200"
               />
               <button
                 type="button"
                 onClick={() => fetchStockEvents(formData.scriptName)}
                 disabled={!formData.scriptName || fetchingEvents}
-                className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 whitespace-nowrap"
+                className="px-4 py-2 bg-purple-600 dark:bg-purple-700 text-white rounded-md hover:bg-purple-700 dark:hover:bg-purple-600 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 whitespace-nowrap"
               >
                 <RefreshCw className={`w-4 h-4 ${fetchingEvents ? 'animate-spin' : ''}`} />
                 {fetchingEvents ? 'Checking...' : 'Check Events'}
               </button>
             </div>
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
               Automatically detects bonus, split, dividend, and earnings events
             </p>
           </div>
@@ -552,14 +552,14 @@ export default function CallEntryForm({ onSubmit }: CallEntryFormProps) {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex-1 bg-blue-600 dark:bg-blue-700 text-white py-2 px-4 rounded-md hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isSubmitting ? 'Creating...' : 'Create Call'}
           </button>
           <button
             type="button"
             onClick={() => setIsOpen(false)}
-            className="flex-1 bg-gray-200 text-gray-800 py-2 px-4 rounded-md hover:bg-gray-300 transition-colors font-medium"
+            className="flex-1 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 py-2 px-4 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors font-medium"
           >
             Cancel
           </button>
