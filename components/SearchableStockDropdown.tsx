@@ -131,26 +131,26 @@ export default function SearchableStockDropdown({
       <div className="relative">
         {/* Display selected value or open dropdown */}
         {value && !isOpen ? (
-          <div className="flex items-center w-full px-3 py-2 border border-gray-300 rounded-md bg-white">
-            <span className="flex-1 text-gray-900 font-medium">{value}</span>
+          <div className="flex items-center w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700">
+            <span className="flex-1 text-gray-900 dark:text-white font-medium">{value}</span>
             <button
               type="button"
               onClick={handleClear}
-              className="p-1 hover:bg-gray-100 rounded"
+              className="p-1 hover:bg-gray-100 dark:hover:bg-gray-600 rounded"
             >
-              <X className="w-4 h-4 text-gray-500" />
+              <X className="w-4 h-4 text-gray-500 dark:text-gray-400" />
             </button>
             <button
               type="button"
               onClick={() => setIsOpen(true)}
-              className="p-1 hover:bg-gray-100 rounded ml-1"
+              className="p-1 hover:bg-gray-100 dark:hover:bg-gray-600 rounded ml-1"
             >
-              <ChevronDown className="w-4 h-4 text-gray-500" />
+              <ChevronDown className="w-4 h-4 text-gray-500 dark:text-gray-400" />
             </button>
           </div>
         ) : (
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-gray-500" />
             <input
               ref={inputRef}
               type="text"
@@ -164,15 +164,15 @@ export default function SearchableStockDropdown({
               placeholder={loading ? "Loading NSE stocks..." : "Search NSE stocks (e.g., RELIANCE, TCS)"}
               required={required && !value}
               disabled={loading}
-              className="w-full pl-10 pr-10 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50"
+              className="w-full pl-10 pr-10 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50 dark:placeholder-gray-400"
             />
             {value && (
               <button
                 type="button"
                 onClick={handleClear}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 p-1 hover:bg-gray-100 rounded"
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 p-1 hover:bg-gray-100 dark:hover:bg-gray-600 rounded"
               >
-                <X className="w-4 h-4 text-gray-500" />
+                <X className="w-4 h-4 text-gray-500 dark:text-gray-400" />
               </button>
             )}
           </div>
@@ -181,7 +181,7 @@ export default function SearchableStockDropdown({
 
       {/* Dropdown list */}
       {isOpen && (
-        <div className="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto">
+        <div className="absolute z-50 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md shadow-lg max-h-60 overflow-auto">
           {filteredStocks.length > 0 ? (
             <div ref={listRef}>
               {filteredStocks.map((stock, index) => (
@@ -190,22 +190,22 @@ export default function SearchableStockDropdown({
                   type="button"
                   onClick={() => handleSelect(stock)}
                   onMouseEnter={() => setHighlightedIndex(index)}
-                  className={`w-full text-left px-4 py-2 hover:bg-blue-50 transition-colors ${
-                    index === highlightedIndex ? 'bg-blue-50' : ''
-                  } ${value === stock ? 'bg-blue-100 font-medium' : ''}`}
+                  className={`w-full text-left px-4 py-2 text-gray-900 dark:text-gray-100 hover:bg-blue-50 dark:hover:bg-blue-900/30 transition-colors ${
+                    index === highlightedIndex ? 'bg-blue-50 dark:bg-blue-900/30' : ''
+                  } ${value === stock ? 'bg-blue-100 dark:bg-blue-900/50 font-medium' : ''}`}
                 >
                   {stock}
                 </button>
               ))}
             </div>
           ) : (
-            <div className="px-4 py-3 text-gray-500 text-sm">
+            <div className="px-4 py-3 text-gray-500 dark:text-gray-400 text-sm">
               No stocks found matching "{searchQuery}"
             </div>
           )}
 
           {searchQuery === '' && (
-            <div className="px-4 py-2 text-xs text-gray-400 border-t border-gray-200 bg-gray-50">
+            <div className="px-4 py-2 text-xs text-gray-400 dark:text-gray-500 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50">
               Showing {stocks.length} NSE stocks
             </div>
           )}
