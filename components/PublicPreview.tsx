@@ -43,14 +43,14 @@ export default function PublicPreview({ calls }: PublicPreviewProps) {
 
   const getPatternFullName = (pattern: string) => {
     const patternMap: Record<string, string> = {
-      'TR': 'Triangle',
-      'UB': 'Uptrend Breakout',
-      'BF': 'Bull Flag',
-      'BO': 'Breakout',
-      'H&S': 'Head & Shoulders',
-      'DB': 'Double Bottom',
-      'TB': 'Triple Bottom',
-      'Other': 'Other'
+      'BO': 'Breakout (price and volume)',
+      'TR': 'Trend Reversal BO',
+      'UB': 'Uptrend BO',
+      'RB': 'Rounding bottom BO',
+      'BF': 'Bullish engulf BO',
+      'FO': 'Flagout BO',
+      'TB': 'Trend Broken',
+      'CB': 'Cup and handle BO',
     }
     return patternMap[pattern] || pattern
   }
