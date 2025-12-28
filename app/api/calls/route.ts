@@ -15,15 +15,10 @@ export async function GET(request: NextRequest) {
 
     const where: any = {}
 
-    // Hide future-dated calls for non-admin users
+    // Hide scheduled/unpublished calls for non-admin users
     // Admin can see all calls including scheduled future calls
     if (!isAdmin) {
-      const now = new Date()
-      now.setHours(0, 0, 0, 0) // Set to start of today
-
-      where.callDate = {
-        lte: now, // Only show calls with callDate <= today
-      }
+      where.isPublished = true // Only show published calls to non-admin users
     }
 
     // Date range filter (for manual filtering by users)
@@ -108,6 +103,28 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Scheduling logic
+    const selectedDate = callDate ? new Date(callDate) : new Date()
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+
+    const selectedDateOnly = new Date(selectedDate)
+    selectedDateOnly.setHours(0, 0, 0, 0)
+
+    let scheduledFor = null
+    let isPublished = true
+    let status = 'ACTIVE'
+
+    // If selected date is in the future, schedule for 8:45 AM on that date
+    if (selectedDateOnly > today) {
+      // Set to 8:45 AM on the selected date
+      scheduledFor = new Date(selectedDate)
+      scheduledFor.setHours(8, 45, 0, 0)
+
+      isPublished = false
+      status = 'SCHEDULED'
+    }
+
     const call = await prisma.tradingCall.create({
       data: {
         scriptName,
@@ -122,11 +139,14 @@ export async function POST(request: NextRequest) {
         topPick: topPick ? parseInt(topPick) as number : null,
         support: support ? parseFloat(support) as number : null,
         resistance: resistance ? parseFloat(resistance) as number : null,
-        callDate: callDate ? new Date(callDate) : new Date(),
+        callDate: selectedDate,
         currentPrice: parseFloat(ltp),
         tradeType: tradeType || 'SWING',
         isFlashCard: isFlashCard || false,
         eventMarker: eventMarker || null,
+        scheduledFor,
+        isPublished,
+        status,
       },
     })
 

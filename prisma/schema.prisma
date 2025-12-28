@@ -37,9 +37,13 @@ model TradingCall {
   eventMarker     String?                    // E for bonus/split/dividend events
 
   // Status tracking
-  status          String   @default("ACTIVE") // ACTIVE, TARGET1_HIT, TARGET2_HIT, TARGET3_HIT, SL_HIT, EXPIRED
+  status          String   @default("ACTIVE") // ACTIVE, TARGET1_HIT, TARGET2_HIT, TARGET3_HIT, SL_HIT, EXPIRED, SCHEDULED
   currentPrice    Float?
   lastChecked     DateTime?
+
+  // Scheduling
+  scheduledFor    DateTime? // When to publish the call (8:45 AM on selected date)
+  isPublished     Boolean  @default(true) // false for scheduled calls
 
   // Result details
   target1Hit      Boolean  @default(false)
