@@ -10,6 +10,30 @@ import { isAuthenticatedFromRequest } from '@/lib/auth'
  */
 export async function POST(request: NextRequest) {
   try {
+    // Check if market is open (Monday-Friday, 9:15 AM - 3:30 PM IST)
+    const now = new Date()
+    const istTime = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }))
+    const day = istTime.getDay() // 0 = Sunday, 6 = Saturday
+    const hours = istTime.getHours()
+    const minutes = istTime.getMinutes()
+    const currentTime = hours * 60 + minutes // Convert to minutes since midnight
+
+    // Market hours: Monday-Friday (1-5), 9:15 AM - 3:30 PM
+    const marketOpen = 9 * 60 + 15  // 9:15 AM = 555 minutes
+    const marketClose = 15 * 60 + 30 // 3:30 PM = 930 minutes
+
+    const isWeekend = day === 0 || day === 6 // Sunday or Saturday
+    const isMarketHours = currentTime >= marketOpen && currentTime <= marketClose
+
+    if (isWeekend || !isMarketHours) {
+      return NextResponse.json({
+        message: 'Market is closed. Price check skipped.',
+        skipped: true,
+        reason: isWeekend ? 'Weekend' : 'Outside market hours',
+        marketStatus: 'CLOSED',
+      })
+    }
+
     // Check if last update was within 15 minutes (intelligent throttling)
     const lastChecked = await prisma.tradingCall.findFirst({
       where: {
@@ -24,7 +48,6 @@ export async function POST(request: NextRequest) {
     })
 
     if (lastChecked?.lastChecked) {
-      const now = new Date()
       const timeSinceLastCheck = now.getTime() - lastChecked.lastChecked.getTime()
       const fifteenMinutesInMs = 15 * 60 * 1000
 
@@ -40,10 +63,18 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Fetch all active calls (not yet hit targets or stop loss)
+    // Get today's date at midnight for comparison
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+
+    // Fetch all active calls where callDate <= today (only check calls that are due)
     const activeCalls = await prisma.tradingCall.findMany({
       where: {
         status: 'ACTIVE',
+        isPublished: true, // Only check published calls
+        callDate: {
+          lte: today, // Only calls with callDate <= today
+        },
       },
     })
 
