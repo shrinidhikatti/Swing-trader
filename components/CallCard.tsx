@@ -32,6 +32,8 @@ interface TradingCall {
   tradeType: string
   isFlashCard: boolean
   eventMarker: string | null
+  scheduledFor?: string | null
+  isPublished?: boolean
 }
 
 interface CallCardProps {
@@ -91,9 +93,17 @@ export default function CallCard({ call, onDelete }: CallCardProps) {
   }
 
   const getStatusBadge = () => {
+    if (call.status === 'SCHEDULED') {
+      return (
+        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200">
+          <Clock className="w-3 h-3 mr-1" />
+          Scheduled
+        </span>
+      )
+    }
     if (call.stopLossHit) {
       return (
-        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
+        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200">
           <XCircle className="w-3 h-3 mr-1" />
           Stop Loss Hit
         </span>
@@ -101,7 +111,7 @@ export default function CallCard({ call, onDelete }: CallCardProps) {
     }
     if (call.target3Hit) {
       return (
-        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200">
           <CheckCircle2 className="w-3 h-3 mr-1" />
           Target 3 Hit
         </span>
@@ -109,7 +119,7 @@ export default function CallCard({ call, onDelete }: CallCardProps) {
     }
     if (call.target2Hit) {
       return (
-        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200">
           <CheckCircle2 className="w-3 h-3 mr-1" />
           Target 2 Hit
         </span>
@@ -117,14 +127,14 @@ export default function CallCard({ call, onDelete }: CallCardProps) {
     }
     if (call.target1Hit) {
       return (
-        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200">
           <CheckCircle2 className="w-3 h-3 mr-1" />
           Target 1 Hit
         </span>
       )
     }
     return (
-      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200">
         Active
       </span>
     )
@@ -168,6 +178,19 @@ export default function CallCard({ call, onDelete }: CallCardProps) {
         </div>
         <div className="flex flex-col items-end gap-1">
           {getStatusBadge()}
+
+          {/* Scheduled Badge - Admin Only */}
+          {call.status === 'SCHEDULED' && call.scheduledFor && (
+            <span className="inline-flex items-center px-2 py-1 text-xs font-semibold rounded-full bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200 border border-purple-200 dark:border-purple-700">
+              <Clock className="w-3 h-3 mr-1" />
+              Scheduled: {new Date(call.scheduledFor).toLocaleString('en-IN', {
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+              })}
+            </span>
+          )}
 
           {/* Hit Status with Timings - Top Right */}
           {call.target1HitDate && (
