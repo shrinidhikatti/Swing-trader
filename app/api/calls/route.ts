@@ -115,11 +115,16 @@ export async function POST(request: NextRequest) {
     let isPublished = true
     let status = 'ACTIVE'
 
-    // If selected date is in the future, schedule for 8:45 AM on that date
+    // If selected date is in the future, schedule for 8:45 AM IST on that date
     if (selectedDateOnly > today) {
-      // Set to 8:45 AM on the selected date
-      scheduledFor = new Date(selectedDate)
-      scheduledFor.setHours(8, 45, 0, 0)
+      // Set to 8:45 AM IST on the selected date
+      // Create date in IST timezone
+      const year = selectedDateOnly.getFullYear()
+      const month = selectedDateOnly.getMonth()
+      const day = selectedDateOnly.getDate()
+
+      // Create a new date at 8:45 AM IST (which is 3:15 AM UTC)
+      scheduledFor = new Date(Date.UTC(year, month, day, 3, 15, 0, 0))
 
       isPublished = false
       status = 'SCHEDULED'
