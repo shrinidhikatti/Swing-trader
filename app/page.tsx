@@ -8,6 +8,8 @@ import PublicPreview from '@/components/PublicPreview'
 import LaunchCountdown from '@/components/LaunchCountdown'
 import Disclaimer from '@/components/Disclaimer'
 import FAQModal from '@/components/FAQModal'
+import AnnouncementTicker from '@/components/AnnouncementTicker'
+import AnnouncementManager from '@/components/AnnouncementManager'
 import { isBeforeLaunch } from '@/lib/launchDay'
 import { Calendar, RefreshCw, Settings, TrendingUp, LogIn, LogOut, Shield, Users, User, Database, Menu, X, HelpCircle } from 'lucide-react'
 
@@ -812,10 +814,22 @@ export default function Home() {
           </div>
         </div>
 
+        {/* Announcement Ticker */}
+        <div className="mb-6">
+          <AnnouncementTicker />
+        </div>
+
         {/* Call Entry Form - Admin Only */}
         {isAdmin && (
           <div className="mb-6">
             <CallEntryForm onSubmit={handleCreateCall} />
+          </div>
+        )}
+
+        {/* Announcement Manager - Admin Only */}
+        {isAdmin && (
+          <div className="mb-6">
+            <AnnouncementManager />
           </div>
         )}
 

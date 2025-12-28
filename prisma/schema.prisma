@@ -101,3 +101,13 @@ model User {
   @@index([status])
   @@index([subscriptionEnd])
 }
+
+model Announcement {
+  id        String   @id @default(uuid())
+  message   String   // The ticker message to display
+  isActive  Boolean  @default(true) // Enable/disable without deleting
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([isActive])
+}
