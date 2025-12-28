@@ -10,7 +10,7 @@ import { isAuthenticatedFromRequest } from '@/lib/auth'
  */
 export async function POST(request: NextRequest) {
   try {
-    // Check if market is open (Monday-Friday, 9:15 AM - 3:30 PM IST)
+    // Check if market is open (Monday-Friday, 8:45 AM - 3:45 PM IST)
     const now = new Date()
     const istTime = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }))
     const day = istTime.getDay() // 0 = Sunday, 6 = Saturday
@@ -18,9 +18,9 @@ export async function POST(request: NextRequest) {
     const minutes = istTime.getMinutes()
     const currentTime = hours * 60 + minutes // Convert to minutes since midnight
 
-    // Market hours: Monday-Friday (1-5), 9:15 AM - 3:30 PM
-    const marketOpen = 9 * 60 + 15  // 9:15 AM = 555 minutes
-    const marketClose = 15 * 60 + 30 // 3:30 PM = 930 minutes
+    // Market hours: Monday-Friday (1-5), 8:45 AM - 3:45 PM
+    const marketOpen = 8 * 60 + 45  // 8:45 AM = 525 minutes
+    const marketClose = 15 * 60 + 45 // 3:45 PM = 945 minutes
 
     const isWeekend = day === 0 || day === 6 // Sunday or Saturday
     const isMarketHours = currentTime >= marketOpen && currentTime <= marketClose
