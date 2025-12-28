@@ -72,7 +72,20 @@ export default function Home() {
 
   useEffect(() => {
     checkAuth()
+    // Auto-publish scheduled calls when page loads
+    checkScheduledPosts()
   }, [])
+
+  // Check and publish any scheduled posts that are due
+  const checkScheduledPosts = async () => {
+    try {
+      await fetch('/api/publish-scheduled')
+      // Silent - no need to handle response
+    } catch (error) {
+      // Silent fail - not critical
+      console.error('Error checking scheduled posts:', error)
+    }
+  }
 
   // Auto-logout at midnight
   useEffect(() => {

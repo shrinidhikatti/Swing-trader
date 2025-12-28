@@ -1,18 +1,10 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 
-// This API will be called by a cron job to publish scheduled calls
-// Vercel Cron or external service should call this every minute or at 8:45 AM
-export async function POST(request: Request) {
+// This API will be called automatically when users visit the site
+// No authentication needed - it's a safe operation that only publishes due posts
+export async function GET() {
   try {
-    // Optional: Add authorization header check for cron jobs
-    const authHeader = request.headers.get('authorization')
-    if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      )
-    }
 
     const now = new Date()
 
@@ -40,53 +32,19 @@ export async function POST(request: Request) {
       })
     )
 
-    console.log(`Published ${publishedCalls.length} scheduled calls`)
+    if (publishedCalls.length > 0) {
+      console.log(`✅ Published ${publishedCalls.length} scheduled calls at ${now.toISOString()}`)
+    }
 
     return NextResponse.json({
       success: true,
       published: publishedCalls.length,
-      calls: publishedCalls.map(c => ({
-        id: c.id,
-        scriptName: c.scriptName,
-        scheduledFor: c.scheduledFor,
-      })),
+      timestamp: now.toISOString(),
     })
   } catch (error) {
     console.error('Error publishing scheduled calls:', error)
     return NextResponse.json(
       { success: false, error: 'Failed to publish scheduled calls' },
-      { status: 500 }
-    )
-  }
-}
-
-// GET endpoint for testing (can be removed in production)
-export async function GET() {
-  try {
-    const now = new Date()
-
-    const scheduledCalls = await prisma.tradingCall.findMany({
-      where: {
-        isPublished: false,
-        status: 'SCHEDULED',
-      },
-      select: {
-        id: true,
-        scriptName: true,
-        scheduledFor: true,
-        callDate: true,
-      },
-    })
-
-    return NextResponse.json({
-      now: now.toISOString(),
-      scheduledCalls,
-      count: scheduledCalls.length,
-    })
-  } catch (error) {
-    console.error('Error fetching scheduled calls:', error)
-    return NextResponse.json(
-      { error: 'Failed to fetch scheduled calls' },
       { status: 500 }
     )
   }
