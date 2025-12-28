@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import { Bell } from 'lucide-react'
+import { TrendingUp } from 'lucide-react'
 
 interface Announcement {
   id: string
@@ -36,18 +36,18 @@ export default function AnnouncementTicker() {
   const combinedMessages = announcements.map(a => a.message).join(' • ')
 
   return (
-    <div className="w-full bg-gradient-to-r from-blue-500 via-blue-600 to-blue-500 text-white overflow-hidden border-y border-blue-700 shadow-md">
-      <div className="flex items-center h-8">
-        <div className="flex items-center px-3 bg-blue-700 h-full shrink-0">
-          <Bell className="w-4 h-4 mr-1.5 animate-pulse" />
-          <span className="text-xs font-bold whitespace-nowrap">ANNOUNCEMENT</span>
+    <div className="w-full bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white overflow-hidden shadow-lg">
+      <div className="flex items-center h-10">
+        <div className="flex items-center px-4 bg-gradient-to-r from-blue-700 to-indigo-700 h-full shrink-0 shadow-md">
+          <TrendingUp className="w-4 h-4 mr-2 animate-pulse" />
+          <span className="text-sm font-bold whitespace-nowrap tracking-wide">UPDATES</span>
         </div>
-        <div className="flex-1 overflow-hidden relative">
+        <div className="flex-1 overflow-hidden relative bg-gradient-to-r from-transparent via-white/5 to-transparent">
           <div className="animate-scroll whitespace-nowrap inline-block">
-            <span className="text-sm font-medium px-4">
+            <span className="text-sm font-semibold px-6 py-2 inline-block">
               {combinedMessages}
             </span>
-            <span className="text-sm font-medium px-4">
+            <span className="text-sm font-semibold px-6 py-2 inline-block">
               {combinedMessages}
             </span>
           </div>
@@ -63,7 +63,7 @@ export default function AnnouncementTicker() {
           }
         }
         .animate-scroll {
-          animation: scroll 30s linear infinite;
+          animation: scroll 35s linear infinite;
         }
       `}</style>
     </div>
