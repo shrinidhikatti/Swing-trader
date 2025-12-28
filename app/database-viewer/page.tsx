@@ -88,7 +88,7 @@ export default function DatabaseViewer() {
       call.currentPrice || '',
       call.target1,
       call.target2,
-      call.target3,
+      call.target3 || '',
       call.stopLoss,
       call.status,
       new Date(call.callDate).toLocaleDateString(),
@@ -235,7 +235,7 @@ export default function DatabaseViewer() {
                       ₹{call.target2.toFixed(2)}
                     </td>
                     <td className={`px-4 py-3 whitespace-nowrap ${call.target3Hit ? 'bg-green-100 font-bold' : ''}`}>
-                      ₹{call.target3.toFixed(2)}
+                      {call.target3 ? `₹${call.target3.toFixed(2)}` : '-'}
                     </td>
                     <td className={`px-4 py-3 whitespace-nowrap ${call.stopLossHit ? 'bg-red-100 font-bold' : ''}`}>
                       ₹{call.stopLoss.toFixed(2)}
