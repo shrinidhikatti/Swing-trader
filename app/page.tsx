@@ -130,12 +130,36 @@ export default function Home() {
     }
   }, [authCheckComplete, fromDate, toDate, filterStatus])
 
+  // Check if market is currently open
+  const isMarketOpen = () => {
+    const now = new Date()
+    const istTime = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }))
+    const day = istTime.getDay() // 0 = Sunday, 6 = Saturday
+    const hours = istTime.getHours()
+    const minutes = istTime.getMinutes()
+    const currentTime = hours * 60 + minutes
+
+    const marketOpen = 9 * 60 + 15  // 9:15 AM
+    const marketClose = 15 * 60 + 30 // 3:30 PM
+
+    const isWeekend = day === 0 || day === 6
+    const isMarketHours = currentTime >= marketOpen && currentTime <= marketClose
+
+    return !isWeekend && isMarketHours
+  }
+
   // Auto-refresh countdown timer (every second)
   // Calculate based on lastChecked timestamp, not arbitrary countdown
   useEffect(() => {
     if (!autoRefreshEnabled) return
 
     const countdown = setInterval(() => {
+      // Check if market is open before attempting refresh
+      if (!isMarketOpen()) {
+        setNextRefresh(15 * 60) // Reset to 15 minutes when market is closed
+        return
+      }
+
       if (lastChecked) {
         const lastCheckTime = new Date(lastChecked).getTime()
         const now = Date.now()
@@ -146,7 +170,7 @@ export default function Home() {
         if (remaining <= 0) {
           // Time to refresh! Try to update prices
           handleAutoRefresh()
-          setNextRefresh(0)
+          setNextRefresh(15 * 60)
         } else {
           // Update countdown based on actual time remaining
           setNextRefresh(Math.ceil(remaining / 1000))
@@ -742,10 +766,25 @@ export default function Home() {
 
             {autoRefreshEnabled && (
               <div className="flex items-center gap-2">
-                <div className="flex items-center gap-2 px-3 py-1.5 bg-blue-50 dark:bg-blue-900 border border-blue-200 dark:border-blue-700 rounded-md">
-                  <RefreshCw className="w-3 h-3 text-blue-600 dark:text-blue-300" />
-                  <span className="text-xs font-medium text-blue-700 dark:text-blue-200">
-                    {isAdmin ? 'Auto-refresh' : 'Auto-reload'} in {formatTime(nextRefresh)}
+                <div className={`flex items-center gap-2 px-3 py-1.5 rounded-md border ${
+                  isMarketOpen()
+                    ? 'bg-blue-50 dark:bg-blue-900 border-blue-200 dark:border-blue-700'
+                    : 'bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700'
+                }`}>
+                  <RefreshCw className={`w-3 h-3 ${
+                    isMarketOpen()
+                      ? 'text-blue-600 dark:text-blue-300'
+                      : 'text-gray-500 dark:text-gray-400'
+                  }`} />
+                  <span className={`text-xs font-medium ${
+                    isMarketOpen()
+                      ? 'text-blue-700 dark:text-blue-200'
+                      : 'text-gray-600 dark:text-gray-300'
+                  }`}>
+                    {isMarketOpen()
+                      ? `${isAdmin ? 'Auto-refresh' : 'Auto-reload'} in ${formatTime(nextRefresh)}`
+                      : 'Market Closed'
+                    }
                   </span>
                 </div>
                 <button
