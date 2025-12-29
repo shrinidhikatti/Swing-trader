@@ -52,7 +52,7 @@ export default function Home() {
   const [checkingEvents, setCheckingEvents] = useState(false)
   const [fromDate, setFromDate] = useState<string>('')
   const [toDate, setToDate] = useState<string>('')
-  const [filterStatus, setFilterStatus] = useState<string>('active')
+  const [filterStatus, setFilterStatus] = useState<string>('ACTIVE')
   const [lastChecked, setLastChecked] = useState<string | null>(null)
   const [isAdmin, setIsAdmin] = useState(false)
   const [isUser, setIsUser] = useState(false)
