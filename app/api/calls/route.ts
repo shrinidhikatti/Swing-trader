@@ -13,6 +13,22 @@ export async function GET(request: NextRequest) {
     // Check if admin
     const isAdmin = await isAuthenticatedFromRequest(request)
 
+    // Auto-publish scheduled posts whose time has arrived
+    const now = new Date()
+    await prisma.tradingCall.updateMany({
+      where: {
+        isPublished: false,
+        status: 'SCHEDULED',
+        scheduledFor: {
+          lte: now
+        }
+      },
+      data: {
+        isPublished: true,
+        status: 'ACTIVE'
+      }
+    })
+
     const where: any = {}
 
     // Hide scheduled/unpublished calls for non-admin users
