@@ -52,7 +52,7 @@ export default function Home() {
   const [checkingEvents, setCheckingEvents] = useState(false)
   const [fromDate, setFromDate] = useState<string>('')
   const [toDate, setToDate] = useState<string>('')
-  const [filterStatus, setFilterStatus] = useState<string>('all')
+  const [filterStatus, setFilterStatus] = useState<string>('active')
   const [lastChecked, setLastChecked] = useState<string | null>(null)
   const [isAdmin, setIsAdmin] = useState(false)
   const [isUser, setIsUser] = useState(false)
@@ -665,6 +665,13 @@ export default function Home() {
           )}
         </div>
 
+        {/* Disclaimer Section - Only for non-admin users */}
+        {!isAdmin && (
+          <div className="mb-6">
+            <Disclaimer />
+          </div>
+        )}
+
         {/* Stats Cards */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
           <div className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm border border-gray-200 dark:border-gray-700">
@@ -931,10 +938,12 @@ export default function Home() {
         )}
       </div>
 
-      {/* Disclaimer Section */}
-      <div className="max-w-7xl mx-auto px-4 mt-12">
-        <Disclaimer />
-      </div>
+      {/* Disclaimer Section - Bottom */}
+      {!isAdmin && (
+        <div className="max-w-7xl mx-auto px-4 mt-12">
+          <Disclaimer />
+        </div>
+      )}
 
       {/* Footer */}
       <footer className="bg-gradient-to-r from-slate-800 via-slate-900 to-slate-800 text-white py-8 mt-16">
