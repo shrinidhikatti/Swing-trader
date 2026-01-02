@@ -67,13 +67,14 @@ export async function POST(request: NextRequest) {
     const today = new Date()
     today.setHours(0, 0, 0, 0)
 
-    // Fetch all active calls where callDate <= today (only check calls that are due)
+    // Fetch all active calls where callDate < today (only check calls from previous days)
+    // Don't check today's calls to avoid using stale price data from previous day
     const activeCalls = await prisma.tradingCall.findMany({
       where: {
         status: 'ACTIVE',
         isPublished: true, // Only check published calls
         callDate: {
-          lte: today, // Only calls with callDate <= today
+          lt: today, // Only calls from previous days (NOT today)
         },
       },
     })
