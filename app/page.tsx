@@ -141,7 +141,8 @@ export default function Home() {
     const minutes = istTime.getMinutes()
     const currentTime = hours * 60 + minutes
 
-    const marketOpen = 8 * 60 + 45  // 8:45 AM
+    // Start at 9:15 AM to ensure fresh price data after pre-open session
+    const marketOpen = 9 * 60 + 15  // 9:15 AM
     const marketClose = 15 * 60 + 45 // 3:45 PM
 
     const isWeekend = day === 0 || day === 6

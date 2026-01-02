@@ -18,8 +18,9 @@ export async function POST(request: NextRequest) {
     const minutes = istTime.getMinutes()
     const currentTime = hours * 60 + minutes // Convert to minutes since midnight
 
-    // Market hours: Monday-Friday (1-5), 8:45 AM - 3:45 PM
-    const marketOpen = 8 * 60 + 45  // 8:45 AM = 525 minutes
+    // Market hours: Monday-Friday (1-5), 9:15 AM - 3:45 PM
+    // Note: Start at 9:15 AM to ensure fresh price data after pre-open session (9:00-9:08 AM)
+    const marketOpen = 9 * 60 + 15  // 9:15 AM = 555 minutes
     const marketClose = 15 * 60 + 45 // 3:45 PM = 945 minutes
 
     const isWeekend = day === 0 || day === 6 // Sunday or Saturday
