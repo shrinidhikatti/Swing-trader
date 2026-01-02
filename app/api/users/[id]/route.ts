@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { isAuthenticatedFromRequest, getSession } from '@/lib/auth'
 
+export const dynamic = 'force-dynamic'
+
 // PATCH - Update user status and subscription (ADMIN ONLY)
 export async function PATCH(
   request: NextRequest,

@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { isAuthenticatedFromRequest } from '@/lib/auth'
 
+export const dynamic = 'force-dynamic'
+
 // GET - Get all active announcements (PUBLIC)
 export async function GET() {
   try {

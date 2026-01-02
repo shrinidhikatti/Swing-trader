@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { isAuthenticatedFromRequest } from '@/lib/auth'
 
+export const dynamic = 'force-dynamic'
+
 // GET - Fetch all trading calls with optional date filter (PUBLIC)
 export async function GET(request: NextRequest) {
   try {

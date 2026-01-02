@@ -3,6 +3,8 @@ import { prisma } from '@/lib/prisma'
 import bcrypt from 'bcryptjs'
 import { isAuthenticatedFromRequest } from '@/lib/auth'
 
+export const dynamic = 'force-dynamic'
+
 // POST - Admin resets user password
 export async function POST(request: NextRequest) {
   try {
