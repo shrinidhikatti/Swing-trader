@@ -23,9 +23,6 @@ export async function POST(request: NextRequest) {
     // Find the reset token
     const resetToken = await prisma.passwordResetToken.findUnique({
       where: { token },
-      include: {
-        // We need the user info to update the password
-      },
     })
 
     if (!resetToken) {
