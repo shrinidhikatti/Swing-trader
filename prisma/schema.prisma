@@ -5,7 +5,7 @@ generator client {
 datasource db {
   provider  = "postgresql"
   url       = env("DATABASE_URL")
-  directUrl = env("DATABASE_POSTGRES_URL_NON_POOLING")
+  directUrl = env("DATABASE_POSTGRES_URL_NON_POOLING") // Only needed for production PostgreSQL
 }
 
 model TradingCall {
@@ -111,4 +111,17 @@ model Announcement {
   updatedAt DateTime @updatedAt
 
   @@index([isActive])
+}
+
+model PasswordResetToken {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  userId    String
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([token])
+  @@index([userId])
+  @@index([expiresAt])
 }
