@@ -11,7 +11,7 @@ import FAQModal from '@/components/FAQModal'
 import AnnouncementTicker from '@/components/AnnouncementTicker'
 import AnnouncementManager from '@/components/AnnouncementManager'
 import { isBeforeLaunch } from '@/lib/launchDay'
-import { Calendar, RefreshCw, Settings, TrendingUp, LogIn, LogOut, Shield, Users, User, Database, Menu, X, HelpCircle } from 'lucide-react'
+import { Calendar, RefreshCw, Settings, TrendingUp, LogIn, LogOut, Shield, Users, User, Database, Menu, X, HelpCircle, Send } from 'lucide-react'
 
 interface TradingCall {
   id: string
@@ -491,6 +491,15 @@ export default function Home() {
                     <HelpCircle className="w-4 h-4" />
                     FAQ
                   </button>
+                  <a
+                    href="https://t.me/+ZcbwVbR4ZE4zNDdl"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors text-sm font-medium"
+                  >
+                    <Send className="w-4 h-4" />
+                    Telegram
+                  </a>
                   <button
                     onClick={handleLogout}
                     className="flex items-center gap-2 px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors text-sm font-medium"
@@ -514,6 +523,15 @@ export default function Home() {
                     <HelpCircle className="w-4 h-4" />
                     FAQ
                   </button>
+                  <a
+                    href="https://t.me/+ZcbwVbR4ZE4zNDdl"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors text-sm font-medium"
+                  >
+                    <Send className="w-4 h-4" />
+                    Telegram
+                  </a>
                   <button
                     onClick={handleLogout}
                     className="flex items-center gap-2 px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors text-sm font-medium"
@@ -598,6 +616,16 @@ export default function Home() {
                     <HelpCircle className="w-4 h-4" />
                     FAQ
                   </button>
+                  <a
+                    href="https://t.me/+ZcbwVbR4ZE4zNDdl"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center gap-2 px-4 py-3 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors text-sm font-medium w-full"
+                  >
+                    <Send className="w-4 h-4" />
+                    Telegram
+                  </a>
                   <button
                     onClick={() => {
                       handleLogout()
@@ -627,6 +655,16 @@ export default function Home() {
                     <HelpCircle className="w-4 h-4" />
                     FAQ
                   </button>
+                  <a
+                    href="https://t.me/+ZcbwVbR4ZE4zNDdl"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center gap-2 px-4 py-3 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors text-sm font-medium w-full"
+                  >
+                    <Send className="w-4 h-4" />
+                    Telegram
+                  </a>
                   <button
                     onClick={() => {
                       handleLogout()

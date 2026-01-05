@@ -58,6 +58,16 @@ export default function FAQModal({ isOpen, onClose }: FAQModalProps) {
           {/* FAQ Item 3 */}
           <div>
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+              How do I decide on the Stop loss levels based on the call given?
+            </h3>
+            <p className="text-gray-700 dark:text-gray-300">
+              If there is a call on say Zomato and the closing price was 300Rs and the stop loss given in the call is 270 Rs. Once the market opens probably the stock would open lower. You buy the stock around 285. Now the stop loss for this stock Zomato would be 285-30 i.e 255 (285-30). You should apply this new SL to your trade.
+            </p>
+          </div>
+
+          {/* FAQ Item 4 */}
+          <div>
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
               What is the strategy for exiting at Stop loss or Target?
             </h3>
             <p className="text-gray-700 dark:text-gray-300">
@@ -81,7 +91,7 @@ export default function FAQModal({ isOpen, onClose }: FAQModalProps) {
               What strategy to be used for Target1 and Target2 given in the calls?
             </h3>
             <p className="text-gray-700 dark:text-gray-300">
-              Usually based on the charts there are two levels which the stock would test as it moves up. On the first target lot of selling will come as earlier many buyers were trapped and are holding the stock and want to exit cost to cost. So usually resistance comes on first target and the stock comes down. If the news is good it will cross that resistance and move to the next resistance. It may pause for some time after testing the first resistance or target1. If you are a quick trader, you can exit at Target1 wait for some time and as it comes down, buy it again for the second target.
+              Usually based on the charts there are two levels which the stock would test as it moves up. On the first target lot of selling will come as earlier many buyers were trapped and are holding the stock and want to exit cost to cost. So usually resistance comes on first target and the stock comes down. If the news is good it will cross that resistance and move to the next resistance. It may pause for some time after testing the first resistance or target1. If you are a quick trader, you can exit at Target1 wait for some time and as it comes down, buy it again for the second target. Once the target1 is hit book 50% profit and for the remaining quantity move the SL to cost or cost+2 rs to cover your brokerage cost.
             </p>
           </div>
 
