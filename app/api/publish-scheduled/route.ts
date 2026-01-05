@@ -27,6 +27,8 @@ export async function GET() {
           data: {
             isPublished: true,
             status: 'ACTIVE',
+            currentPrice: call.ltp, // Initialize with entry price
+            lastChecked: now, // Mark as just checked
           },
         })
       })
