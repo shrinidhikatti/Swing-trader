@@ -161,7 +161,7 @@ export async function POST(request: NextRequest) {
           results.push({
             email: user.email,
             status: 'sent',
-            messageId: emailResult.id,
+            messageId: emailResult.data?.id || 'unknown',
           })
         }
       } catch (emailError) {
