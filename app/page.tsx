@@ -76,6 +76,8 @@ export default function Home() {
     checkAuth()
     // Auto-publish scheduled calls when page loads
     checkScheduledPosts()
+    // Auto-check and send renewal reminders
+    checkRenewalReminders()
   }, [])
 
   // Check and publish any scheduled posts that are due
@@ -86,6 +88,17 @@ export default function Home() {
     } catch (error) {
       // Silent fail - not critical
       console.error('Error checking scheduled posts:', error)
+    }
+  }
+
+  // Check and send renewal reminders to users expiring tomorrow
+  const checkRenewalReminders = async () => {
+    try {
+      await fetch('/api/send-renewal-reminders', { method: 'POST' })
+      // Silent - no need to handle response
+    } catch (error) {
+      // Silent fail - not critical
+      console.error('Error checking renewal reminders:', error)
     }
   }
 

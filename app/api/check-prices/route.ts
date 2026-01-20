@@ -249,6 +249,36 @@ export async function POST(request: NextRequest) {
         },
       })
 
+      // Auto-create announcement when any active call hits target or SL
+      // Only create announcement if status changed from ACTIVE to TARGET or SL_HIT
+      if (call.status === 'ACTIVE' && status !== 'ACTIVE') {
+        let announcementMessage = ''
+
+        if (status.includes('TARGET')) {
+          // Target hit announcement
+          const targetLevel = status === 'TARGET3_HIT' ? '3' : status === 'TARGET2_HIT' ? '2' : '1'
+          announcementMessage = `🎯 ${call.scriptName} has hit Target ${targetLevel}! Congratulations to everyone who took the call!`
+        } else if (status === 'SL_HIT') {
+          // Stop loss hit announcement
+          announcementMessage = `⚠️ ${call.scriptName} has hit Stop Loss.`
+        }
+
+        if (announcementMessage) {
+          try {
+            await prisma.announcement.create({
+              data: {
+                message: announcementMessage,
+                isActive: true,
+              },
+            })
+            console.log(`Auto-announcement created for ${call.scriptName} - ${status}`)
+          } catch (announcementError) {
+            console.error('Failed to create auto-announcement:', announcementError)
+            // Don't fail the entire price check if announcement creation fails
+          }
+        }
+      }
+
       updatedCount++
       results.push({
         id: updated.id,

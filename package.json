@@ -14,6 +14,7 @@
     "db:reset": "prisma db push --force-reset",
     "db:seed": "npx tsx prisma/seed.ts",
     "check-prices": "ts-node scripts/check-prices.ts",
+    "send-renewal-reminders": "ts-node scripts/send-renewal-reminders.ts",
     "setup": "npm install && prisma generate && prisma db push"
   },
   "dependencies": {
