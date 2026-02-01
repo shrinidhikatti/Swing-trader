@@ -147,30 +147,30 @@ export default function Home() {
 
   // Check if market is currently open
   const isMarketOpen = () => {
+    // MANUAL OVERRIDE for exceptional trading days (Budget Day, Special Sessions, etc.)
+    // Set to true to enable market on weekends/holidays
+    const OVERRIDE_WEEKEND_CHECK = true  // Enable for Budget Day 2026 (Feb 1)
+
     const now = new Date()
     const istTime = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }))
     const day = istTime.getDay() // 0 = Sunday, 6 = Saturday
     const hours = istTime.getHours()
     const minutes = istTime.getMinutes()
     const currentTime = hours * 60 + minutes
-    const year = istTime.getFullYear()
-    const month = istTime.getMonth() // 0-indexed
-    const date = istTime.getDate()
 
     // Start at 9:15 AM to ensure fresh price data after pre-open session
     const marketOpen = 9 * 60 + 15  // 9:15 AM
     const marketClose = 15 * 60 + 45 // 3:45 PM
 
-    // Exception for Budget Day 2026 - February 1, 2026 (Sunday)
-    const isBudgetDay = year === 2026 && month === 1 && date === 1
-
     const isWeekend = day === 0 || day === 6
     const isMarketHours = currentTime >= marketOpen && currentTime <= marketClose
 
-    // Market is open if it's either:
-    // 1. Not a weekend and during market hours, OR
-    // 2. Budget day (Feb 1, 2026) and during market hours
-    return ((!isWeekend || isBudgetDay) && isMarketHours)
+    // If override is enabled, ignore weekend check
+    if (OVERRIDE_WEEKEND_CHECK) {
+      return isMarketHours
+    }
+
+    return !isWeekend && isMarketHours
   }
 
   // Auto-refresh countdown timer (every second)
