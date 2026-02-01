@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import CallCard from '@/components/CallCard'
 import CallEntryForm from '@/components/CallEntryForm'
@@ -65,6 +65,9 @@ export default function Home() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [showFAQ, setShowFAQ] = useState(false)
   const CALLS_PER_PAGE = 15
+
+  // Ref to prevent multiple simultaneous auto-refreshes
+  const isRefreshing = useRef(false)
 
   // Scroll to top when page changes
   const handlePageChange = (page: number) => {
@@ -209,9 +212,20 @@ export default function Home() {
 
   // Auto-refresh prices function (works for everyone, not just admin)
   const handleAutoRefresh = async () => {
+    // Prevent multiple simultaneous refreshes
+    if (isRefreshing.current) {
+      console.log('Refresh already in progress, skipping...')
+      return
+    }
+
+    isRefreshing.current = true
     console.log('Auto-refreshing prices...')
-    // Use the silent price check function (handles throttling automatically)
-    await handleCheckPrices(true)
+    try {
+      // Use the silent price check function (handles throttling automatically)
+      await handleCheckPrices(true)
+    } finally {
+      isRefreshing.current = false
+    }
   }
 
   const checkAuth = async () => {
