@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import CallCard from '@/components/CallCard'
 import CallEntryForm from '@/components/CallEntryForm'
@@ -65,9 +65,6 @@ export default function Home() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [showFAQ, setShowFAQ] = useState(false)
   const CALLS_PER_PAGE = 15
-
-  // Ref to prevent multiple simultaneous auto-refreshes
-  const isRefreshing = useRef(false)
 
   // Scroll to top when page changes
   const handlePageChange = (page: number) => {
@@ -161,8 +158,7 @@ export default function Home() {
     const marketOpen = 9 * 60 + 15  // 9:15 AM
     const marketClose = 15 * 60 + 45 // 3:45 PM
 
-    // Temporarily allow Sundays for Budget Day 2026 (only block Saturdays)
-    const isWeekend = day === 6  // Only Saturday, not Sunday
+    const isWeekend = day === 0 || day === 6
     const isMarketHours = currentTime >= marketOpen && currentTime <= marketClose
 
     return !isWeekend && isMarketHours
@@ -212,20 +208,9 @@ export default function Home() {
 
   // Auto-refresh prices function (works for everyone, not just admin)
   const handleAutoRefresh = async () => {
-    // Prevent multiple simultaneous refreshes
-    if (isRefreshing.current) {
-      console.log('Refresh already in progress, skipping...')
-      return
-    }
-
-    isRefreshing.current = true
     console.log('Auto-refreshing prices...')
-    try {
-      // Use the silent price check function (handles throttling automatically)
-      await handleCheckPrices(true)
-    } finally {
-      isRefreshing.current = false
-    }
+    // Use the silent price check function (handles throttling automatically)
+    await handleCheckPrices(true)
   }
 
   const checkAuth = async () => {
