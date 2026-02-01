@@ -158,7 +158,7 @@ export default function Home() {
     const marketOpen = 9 * 60 + 15  // 9:15 AM
     const marketClose = 15 * 60 + 45 // 3:45 PM
 
-    const isWeekend = day === 6  // Temporarily allow Sundays for Budget Day
+    const isWeekend = day === 0 || day === 6
     const isMarketHours = currentTime >= marketOpen && currentTime <= marketClose
 
     return !isWeekend && isMarketHours
