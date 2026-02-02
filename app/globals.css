@@ -3,16 +3,25 @@
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+  --foreground-rgb: 26, 41, 66;
+  --background-start-rgb: 255, 255, 255;
+  --background-end-rgb: 248, 250, 252;
+
+  /* Premium color palette */
+  --navy-950: #0A1628;
+  --navy-900: #1A2942;
+  --navy-800: #243B53;
+  --gold-400: #D4AF37;
+  --gold-600: #B8860B;
+  --emerald-700: #047857;
+  --emerald-800: #065F46;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
+    --foreground-rgb: 240, 244, 248;
+    --background-start-rgb: 10, 22, 40;
+    --background-end-rgb: 26, 41, 66;
   }
 }
 
@@ -24,6 +33,149 @@ body {
       rgb(var(--background-end-rgb))
     )
     rgb(var(--background-start-rgb));
+}
+
+/* Premium grain texture overlay */
+.grain-texture {
+  position: relative;
+  isolation: isolate;
+}
+
+.grain-texture::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.5' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
+  opacity: 0.4;
+  pointer-events: none;
+  z-index: 1;
+  mix-blend-mode: overlay;
+}
+
+.grain-texture > * {
+  position: relative;
+  z-index: 2;
+}
+
+/* Elegant underline animation */
+.elegant-underline {
+  position: relative;
+  display: inline-block;
+}
+
+.elegant-underline::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--gold-400), var(--gold-600));
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.elegant-underline:hover::after {
+  width: 100%;
+}
+
+/* Sophisticated fade-in animation */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.animate-delay-100 {
+  animation-delay: 0.1s;
+  opacity: 0;
+}
+
+.animate-delay-200 {
+  animation-delay: 0.2s;
+  opacity: 0;
+}
+
+.animate-delay-300 {
+  animation-delay: 0.3s;
+  opacity: 0;
+}
+
+.animate-delay-400 {
+  animation-delay: 0.4s;
+  opacity: 0;
+}
+
+/* Premium shimmer effect for gold elements */
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+.gold-shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--gold-600) 0%,
+    var(--gold-400) 50%,
+    var(--gold-600) 100%
+  );
+  background-size: 1000px 100%;
+  animation: shimmer 3s infinite linear;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Refined shadow utilities */
+.shadow-editorial {
+  box-shadow:
+    0 1px 3px rgba(10, 22, 40, 0.05),
+    0 4px 12px rgba(10, 22, 40, 0.08),
+    0 16px 24px rgba(10, 22, 40, 0.06);
+}
+
+.shadow-editorial-lg {
+  box-shadow:
+    0 2px 8px rgba(10, 22, 40, 0.06),
+    0 8px 24px rgba(10, 22, 40, 0.1),
+    0 24px 48px rgba(10, 22, 40, 0.12);
+}
+
+/* Glass morphism for premium cards */
+.glass-premium {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+@media (prefers-color-scheme: dark) {
+  .glass-premium {
+    background: rgba(26, 41, 66, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+}
+
+/* Gold accent border */
+.border-gold-accent {
+  border-image: linear-gradient(135deg, var(--gold-400), var(--gold-600)) 1;
+}
+
+/* Emerald glow for profit indicators */
+.emerald-glow {
+  box-shadow: 0 0 20px rgba(4, 120, 87, 0.3);
 }
 
 @layer utilities {

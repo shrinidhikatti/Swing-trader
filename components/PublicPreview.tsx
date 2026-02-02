@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import { TrendingUp, ArrowUpRight, Calendar, Award } from 'lucide-react'
+import { TrendingUp, ArrowUpRight, Calendar, Award, BarChart3, Shield, Clock } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import Disclaimer from './Disclaimer'
 
@@ -43,269 +43,458 @@ export default function PublicPreview({ calls }: PublicPreviewProps) {
 
   const getPatternFullName = (pattern: string) => {
     const patternMap: Record<string, string> = {
-      'BO': 'Breakout (price and volume)',
-      'TR': 'Trend Reversal BO',
-      'UB': 'Uptrend BO',
-      'RB': 'Rounding bottom BO',
-      'BF': 'Bullish engulf BO',
-      'FO': 'Flagout BO',
+      'BO': 'Breakout',
+      'TR': 'Trend Reversal',
+      'UB': 'Uptrend Breakout',
+      'RB': 'Rounding Bottom',
+      'BF': 'Bullish Engulfing',
+      'FO': 'Flag Out',
       'TB': 'Trend Broken',
-      'CB': 'Cup and handle BO',
+      'CB': 'Cup & Handle',
     }
     return patternMap[pattern] || pattern
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-emerald-50 dark:from-gray-900 dark:to-gray-800">
-      {/* Top Navigation Bar */}
-      <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 py-3">
+    <div className="min-h-screen bg-gradient-to-br from-white via-navy-50 to-gold-50 dark:from-navy-950 dark:via-navy-900 dark:to-navy-800">
+      {/* Premium Navigation Bar */}
+      <nav className="grain-texture bg-white/80 dark:bg-navy-950/90 backdrop-blur-md border-b border-navy-200/50 dark:border-gold-600/20 sticky top-0 z-50 shadow-editorial">
+        <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <TrendingUp className="w-6 h-6 text-blue-600 dark:text-blue-400" />
-              <span className="text-lg font-bold text-gray-900 dark:text-white">Swing Trader Sagar</span>
+            <div className="flex items-center gap-3">
+              <div className="relative">
+                <div className="absolute inset-0 bg-gold-400 opacity-20 blur-lg rounded-full"></div>
+                <TrendingUp className="relative w-7 h-7 text-navy-900 dark:text-gold-400" strokeWidth={2.5} />
+              </div>
+              <div>
+                <h1 className="text-xl font-playfair font-bold text-navy-950 dark:text-white tracking-tight">
+                  Swing Trader Sagar
+                </h1>
+                <p className="text-xs text-navy-600 dark:text-navy-300 font-light tracking-wide">
+                  PREMIUM TRADING INTELLIGENCE
+                </p>
+              </div>
             </div>
             <div className="flex items-center gap-3">
               <button
                 onClick={() => router.push('/login')}
-                className="px-4 py-2 text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-md transition-colors"
+                className="px-5 py-2.5 text-sm font-medium text-navy-900 dark:text-navy-100 hover:text-gold-600 dark:hover:text-gold-400 transition-colors elegant-underline"
               >
                 Login
               </button>
               <button
                 onClick={() => router.push('/register')}
-                className="px-4 py-2 text-sm font-medium text-white bg-blue-600 dark:bg-blue-700 hover:bg-blue-700 dark:hover:bg-blue-600 rounded-md transition-colors shadow-sm"
+                className="px-6 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-navy-900 to-navy-800 dark:from-gold-600 dark:to-gold-700 hover:from-navy-800 hover:to-navy-700 dark:hover:from-gold-500 dark:hover:to-gold-600 rounded-md transition-all shadow-editorial hover:shadow-editorial-lg transform hover:-translate-y-0.5"
               >
                 Register
               </button>
             </div>
           </div>
         </div>
-      </div>
+      </nav>
 
-      {/* Hero Banner */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-blue-600 via-indigo-700 to-emerald-600">
-        {/* Animated background elements */}
-        <div className="absolute inset-0 opacity-20">
-          <div className="absolute top-20 left-10 w-72 h-72 bg-white rounded-full mix-blend-overlay filter blur-3xl animate-pulse"></div>
-          <div className="absolute bottom-20 right-10 w-96 h-96 bg-emerald-300 rounded-full mix-blend-overlay filter blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+      {/* Hero Section - Editorial Magazine Style */}
+      <section className="relative overflow-hidden grain-texture">
+        {/* Decorative background elements */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-gold-400/10 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-0 left-0 w-96 h-96 bg-emerald-700/10 rounded-full blur-3xl"></div>
+          {/* Grid pattern overlay */}
+          <div className="absolute inset-0 bg-[linear-gradient(rgba(10,22,40,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(10,22,40,0.03)_1px,transparent_1px)] bg-[size:64px_64px] dark:bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)]"></div>
         </div>
 
-        <div className="relative max-w-6xl mx-auto px-6 py-20 md:py-28 text-center">
-          {/* Icon with glow effect */}
-          <div className="flex justify-center mb-6">
-            <div className="relative">
-              <div className="absolute inset-0 bg-white opacity-40 blur-2xl rounded-full"></div>
-              <div className="relative bg-white/10 backdrop-blur-sm p-5 rounded-2xl border border-white/20 shadow-2xl">
-                <TrendingUp className="w-14 h-14 md:w-16 md:h-16 text-white" strokeWidth={2.5} />
-              </div>
-            </div>
-          </div>
-
-          {/* Main heading */}
-          <h1 className="text-5xl md:text-7xl font-extrabold mb-6 tracking-tight">
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-white via-blue-50 to-emerald-100">
-              Swing Trader Sagar
-            </span>
-          </h1>
-
-          {/* Subtitle */}
-          <p className="text-xl md:text-2xl mb-8 text-blue-50 font-light max-w-2xl mx-auto leading-relaxed">
-            Educational trading calls with proven results
-          </p>
-
-          {/* Success badge */}
-          <div className="inline-flex items-center gap-3 bg-white/15 backdrop-blur-md px-6 py-3 rounded-full border border-white/30 shadow-lg">
-            <div className="relative">
-              <Award className="w-6 h-6 md:w-7 md:h-7 text-yellow-300" fill="currentColor" />
-              <div className="absolute inset-0 bg-yellow-300 blur-md opacity-50"></div>
-            </div>
-            <span className="text-lg md:text-xl font-bold text-white">
-              {calls.length} Recent Successful Trades
-            </span>
-          </div>
-
-          {/* Decorative wave */}
-          <div className="absolute bottom-0 left-0 right-0">
-            <svg viewBox="0 0 1440 120" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-auto">
-              <path d="M0 120L60 110C120 100 240 80 360 70C480 60 600 60 720 65C840 70 960 80 1080 85C1200 90 1320 90 1380 90L1440 90V120H1380C1320 120 1200 120 1080 120C960 120 840 120 720 120C600 120 480 120 360 120C240 120 120 120 60 120H0Z" fill="rgb(248, 250, 252)" fillOpacity="1"/>
-            </svg>
-          </div>
-        </div>
-      </div>
-
-      {/* Preview Cards */}
-      <div className="max-w-7xl mx-auto px-4 py-12">
-        <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-            Recent Target Hits
-          </h2>
-          <p className="text-gray-600 dark:text-gray-300">
-            See our latest successful trading calls below
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-          {calls.map((call) => {
-            const highestTarget = getHighestHitTarget(call)
-            const gainPercentage = highestTarget
-              ? calculateGainPercentage(call.ltp, highestTarget.price)
-              : '0'
-
-            return (
-              <div
-                key={call.id}
-                className="bg-white dark:bg-gray-800 rounded-xl shadow-lg border-2 border-green-200 dark:border-green-700 p-6 hover:shadow-2xl transition-all transform hover:-translate-y-1"
-              >
-                {/* Stock Name & Pattern */}
-                <div className="flex items-start justify-between mb-4">
-                  <div>
-                    <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
-                      {call.scriptName}
-                    </h3>
-                    <span className="inline-block bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-200 text-xs font-semibold px-2 py-1 rounded mt-1">
-                      {getPatternFullName(call.patternType)}
-                    </span>
-                  </div>
-                  <div className="bg-green-100 dark:bg-green-900/50 rounded-full p-2">
-                    <ArrowUpRight className="w-6 h-6 text-green-600 dark:text-green-400" />
-                  </div>
-                </div>
-
-                {/* Event Marker */}
-                {call.eventMarker && (
-                  <div className="mb-3">
-                    <span className="inline-block bg-purple-100 dark:bg-purple-900/50 text-purple-800 dark:text-purple-200 text-xs font-semibold px-2 py-1 rounded">
-                      Event: {call.eventMarker}
-                    </span>
-                  </div>
-                )}
-
-                {/* Entry Price */}
-                <div className="mb-3">
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Entry Price (LTP)</p>
-                  <p className="text-lg font-semibold text-gray-900 dark:text-white">
-                    ₹{call.ltp.toFixed(2)}
-                  </p>
-                </div>
-
-                {/* Target Hit */}
-                {highestTarget && (
-                  <div className="mb-3">
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
-                      Target {highestTarget.level} Hit
-                    </p>
-                    <p className="text-lg font-semibold text-green-600 dark:text-green-400">
-                      ₹{highestTarget.price.toFixed(2)}
-                    </p>
-                  </div>
-                )}
-
-                {/* Gain Percentage */}
-                <div className="bg-green-50 dark:bg-green-900/30 rounded-lg p-3 mb-3">
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Profit</p>
-                  <p className="text-2xl font-bold text-green-600 dark:text-green-400">
-                    +{gainPercentage}%
-                  </p>
-                </div>
-
-                {/* Date */}
-                <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
-                  <Calendar className="w-4 h-4" />
-                  <span>
-                    Called: {new Date(call.callDate).toLocaleDateString('en-IN')}
+        <div className="relative max-w-7xl mx-auto px-6 py-24 md:py-32">
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            {/* Left Column - Typography */}
+            <div className="space-y-8">
+              {/* Overline */}
+              <div className="animate-fade-in-up">
+                <div className="inline-flex items-center gap-2 px-4 py-2 bg-navy-950/5 dark:bg-gold-400/10 rounded-full border border-navy-200 dark:border-gold-600/30">
+                  <div className="w-2 h-2 bg-emerald-700 rounded-full animate-pulse"></div>
+                  <span className="text-xs font-semibold tracking-widest uppercase text-navy-900 dark:text-gold-400">
+                    Est. 2025 • Proven Performance
                   </span>
                 </div>
               </div>
-            )
-          })}
+
+              {/* Main Headline */}
+              <div className="animate-fade-in-up animate-delay-100">
+                <h2 className="font-playfair text-5xl md:text-6xl lg:text-7xl font-bold text-navy-950 dark:text-white leading-[1.1] mb-6">
+                  Precision Trading.
+                  <span className="block gold-shimmer mt-2">
+                    Premium Results.
+                  </span>
+                </h2>
+                <p className="text-lg md:text-xl text-navy-700 dark:text-navy-300 font-light leading-relaxed max-w-xl">
+                  Curated swing trading calls backed by rigorous technical analysis.
+                  Join India's most sophisticated trading intelligence platform.
+                </p>
+              </div>
+
+              {/* Stats Bar */}
+              <div className="animate-fade-in-up animate-delay-200 grid grid-cols-2 gap-6 pt-4">
+                <div className="border-l-2 border-gold-600 pl-4">
+                  <div className="text-4xl font-playfair font-bold text-navy-950 dark:text-white mb-1">
+                    {calls.length}+
+                  </div>
+                  <div className="text-sm text-navy-600 dark:text-navy-400 uppercase tracking-wide">
+                    Successful Trades
+                  </div>
+                </div>
+                <div className="border-l-2 border-emerald-700 pl-4">
+                  <div className="text-4xl font-playfair font-bold text-emerald-700 dark:text-emerald-500 mb-1">
+                    {calls.length > 0 ? calculateGainPercentage(
+                      calls.reduce((sum, c) => sum + c.ltp, 0) / calls.length,
+                      calls.reduce((sum, c) => {
+                        const target = getHighestHitTarget(c);
+                        return sum + (target?.price || c.ltp);
+                      }, 0) / calls.length
+                    ) : '0'}%
+                  </div>
+                  <div className="text-sm text-navy-600 dark:text-navy-400 uppercase tracking-wide">
+                    Avg. Return
+                  </div>
+                </div>
+              </div>
+
+              {/* CTA Buttons */}
+              <div className="animate-fade-in-up animate-delay-300 flex flex-col sm:flex-row gap-4 pt-2">
+                <button
+                  onClick={() => router.push('/register')}
+                  className="group px-8 py-4 bg-navy-950 dark:bg-gold-600 text-white rounded-md font-semibold text-base hover:bg-navy-800 dark:hover:bg-gold-500 transition-all shadow-editorial-lg hover:shadow-2xl transform hover:-translate-y-1 flex items-center justify-center gap-2"
+                >
+                  Start Trading Today
+                  <ArrowUpRight className="w-5 h-5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                </button>
+                <button
+                  onClick={() => {
+                    const element = document.getElementById('recent-trades');
+                    element?.scrollIntoView({ behavior: 'smooth' });
+                  }}
+                  className="px-8 py-4 bg-white dark:bg-navy-800 text-navy-950 dark:text-white rounded-md font-semibold text-base hover:bg-navy-50 dark:hover:bg-navy-700 transition-colors border-2 border-navy-200 dark:border-navy-600"
+                >
+                  View Track Record
+                </button>
+              </div>
+            </div>
+
+            {/* Right Column - Featured Success Card */}
+            <div className="animate-fade-in-up animate-delay-400">
+              {calls.length > 0 && (
+                <div className="relative">
+                  {/* Decorative corner accent */}
+                  <div className="absolute -top-4 -right-4 w-24 h-24 border-t-4 border-r-4 border-gold-400 opacity-30"></div>
+                  <div className="absolute -bottom-4 -left-4 w-24 h-24 border-b-4 border-l-4 border-emerald-700 opacity-30"></div>
+
+                  <div className="relative glass-premium rounded-2xl p-8 shadow-editorial-lg border-t-4 border-gold-600">
+                    <div className="absolute top-0 right-8 -translate-y-1/2">
+                      <div className="px-4 py-2 bg-emerald-700 text-white text-xs font-bold uppercase tracking-wider rounded-full shadow-lg">
+                        Featured Success
+                      </div>
+                    </div>
+
+                    <div className="mt-4 space-y-6">
+                      <div>
+                        <div className="text-sm text-navy-600 dark:text-navy-400 uppercase tracking-wider mb-2">
+                          Stock
+                        </div>
+                        <h3 className="font-playfair text-4xl font-bold text-navy-950 dark:text-white">
+                          {calls[0].scriptName}
+                        </h3>
+                        <div className="mt-2 inline-block px-3 py-1 bg-navy-100 dark:bg-navy-700 rounded-full">
+                          <span className="text-xs font-semibold text-navy-900 dark:text-navy-100">
+                            {getPatternFullName(calls[0].patternType)}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-6 py-6 border-y border-navy-200 dark:border-navy-700">
+                        <div>
+                          <div className="text-sm text-navy-600 dark:text-navy-400 uppercase tracking-wider mb-1">
+                            Entry
+                          </div>
+                          <div className="font-playfair text-2xl font-bold text-navy-950 dark:text-white">
+                            ₹{calls[0].ltp.toFixed(2)}
+                          </div>
+                        </div>
+                        <div>
+                          <div className="text-sm text-navy-600 dark:text-navy-400 uppercase tracking-wider mb-1">
+                            Target Hit
+                          </div>
+                          <div className="font-playfair text-2xl font-bold text-emerald-700 dark:text-emerald-500">
+                            ₹{getHighestHitTarget(calls[0])?.price.toFixed(2)}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="relative overflow-hidden bg-gradient-to-br from-emerald-700 to-emerald-800 rounded-xl p-6 emerald-glow">
+                        <div className="relative z-10">
+                          <div className="text-emerald-100 text-sm font-semibold uppercase tracking-wider mb-2">
+                            Profit Realized
+                          </div>
+                          <div className="font-playfair text-5xl font-bold text-white flex items-baseline gap-2">
+                            <span>+</span>
+                            <span>
+                              {getHighestHitTarget(calls[0])
+                                ? calculateGainPercentage(calls[0].ltp, getHighestHitTarget(calls[0])!.price)
+                                : '0.00'}
+                            </span>
+                            <span className="text-3xl">%</span>
+                          </div>
+                        </div>
+                        <div className="absolute bottom-0 right-0 opacity-10">
+                          <BarChart3 className="w-32 h-32" strokeWidth={1} />
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-2 text-sm text-navy-600 dark:text-navy-400">
+                        <Calendar className="w-4 h-4" />
+                        <span>
+                          Called on {new Date(calls[0].callDate).toLocaleDateString('en-IN', {
+                            month: 'long',
+                            day: 'numeric',
+                            year: 'numeric'
+                          })}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Recent Trades Section - Editorial Grid */}
+      <section id="recent-trades" className="relative py-20 bg-white/50 dark:bg-navy-900/50 grain-texture">
+        <div className="max-w-7xl mx-auto px-6">
+          {/* Section Header */}
+          <div className="text-center mb-16">
+            <div className="inline-block px-4 py-1 bg-gold-100 dark:bg-gold-900/30 rounded-full mb-4">
+              <span className="text-xs font-bold uppercase tracking-widest text-gold-800 dark:text-gold-400">
+                Verified Performance
+              </span>
+            </div>
+            <h2 className="font-playfair text-4xl md:text-5xl font-bold text-navy-950 dark:text-white mb-4">
+              Recent Target Hits
+            </h2>
+            <p className="text-lg text-navy-600 dark:text-navy-300 max-w-2xl mx-auto">
+              Every call is tracked, verified, and transparently reported.
+              See the results that set us apart.
+            </p>
+          </div>
+
+          {/* Trades Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {calls.map((call, index) => {
+              const highestTarget = getHighestHitTarget(call)
+              const gainPercentage = highestTarget
+                ? calculateGainPercentage(call.ltp, highestTarget.price)
+                : '0'
+
+              return (
+                <article
+                  key={call.id}
+                  className="group glass-premium rounded-xl overflow-hidden shadow-editorial hover:shadow-editorial-lg transition-all duration-500 hover:-translate-y-2"
+                  style={{
+                    animation: 'fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards',
+                    animationDelay: `${index * 0.1}s`,
+                    opacity: 0
+                  }}
+                >
+                  {/* Card Header */}
+                  <div className="p-6 pb-4 border-b border-navy-200 dark:border-navy-700">
+                    <div className="flex items-start justify-between mb-3">
+                      <h3 className="font-playfair text-2xl font-bold text-navy-950 dark:text-white">
+                        {call.scriptName}
+                      </h3>
+                      <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg">
+                        <TrendingUp className="w-5 h-5 text-emerald-700 dark:text-emerald-500" strokeWidth={2.5} />
+                      </div>
+                    </div>
+
+                    <div className="flex flex-wrap gap-2">
+                      <span className="inline-block px-3 py-1 bg-navy-100 dark:bg-navy-800 text-navy-900 dark:text-navy-100 text-xs font-semibold rounded-full">
+                        {getPatternFullName(call.patternType)}
+                      </span>
+                      {call.eventMarker && (
+                        <span className="inline-block px-3 py-1 bg-gold-100 dark:bg-gold-900/30 text-gold-800 dark:text-gold-400 text-xs font-semibold rounded-full">
+                          {call.eventMarker}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Card Body */}
+                  <div className="p-6 space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <div className="text-xs text-navy-600 dark:text-navy-400 uppercase tracking-wider mb-1">
+                          Entry (LTP)
+                        </div>
+                        <div className="font-playfair text-xl font-bold text-navy-950 dark:text-white">
+                          ₹{call.ltp.toFixed(2)}
+                        </div>
+                      </div>
+                      <div>
+                        <div className="text-xs text-navy-600 dark:text-navy-400 uppercase tracking-wider mb-1">
+                          {highestTarget?.level} Hit
+                        </div>
+                        <div className="font-playfair text-xl font-bold text-emerald-700 dark:text-emerald-500">
+                          ₹{highestTarget?.price.toFixed(2)}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Profit Badge */}
+                    <div className="relative overflow-hidden bg-gradient-to-br from-emerald-50 to-emerald-100 dark:from-emerald-900/20 dark:to-emerald-800/20 rounded-lg p-4 border-l-4 border-emerald-700">
+                      <div className="relative z-10">
+                        <div className="text-xs text-emerald-800 dark:text-emerald-400 font-semibold uppercase tracking-wider mb-1">
+                          Profit
+                        </div>
+                        <div className="font-playfair text-3xl font-bold text-emerald-700 dark:text-emerald-500">
+                          +{gainPercentage}%
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Date */}
+                    <div className="flex items-center gap-2 text-sm text-navy-600 dark:text-navy-400 pt-2">
+                      <Calendar className="w-4 h-4" />
+                      <span>
+                        {new Date(call.callDate).toLocaleDateString('en-IN', {
+                          month: 'short',
+                          day: 'numeric',
+                          year: 'numeric'
+                        })}
+                      </span>
+                    </div>
+                  </div>
+                </article>
+              )
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* Premium CTA Section */}
+      <section className="relative py-24 overflow-hidden grain-texture">
+        <div className="absolute inset-0 bg-gradient-to-br from-navy-950 via-navy-900 to-navy-800"></div>
+
+        {/* Decorative elements */}
+        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-gold-400 to-transparent"></div>
+        <div className="absolute inset-0 opacity-5">
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gold-400 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-emerald-700 rounded-full blur-3xl"></div>
         </div>
 
-        {/* Call to Action Banner */}
-        <div className="bg-gradient-to-r from-orange-500 to-red-500 rounded-2xl shadow-2xl p-8 md:p-12 text-center text-white">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            Want Full Trading List of Today?
-          </h2>
-          <p className="text-xl md:text-2xl mb-6 text-orange-100">
-            Register Now to Get Access to All Active Trading Calls!
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+        <div className="relative max-w-4xl mx-auto px-6 text-center">
+          <div className="mb-8">
+            <div className="inline-block p-4 bg-gold-400/10 rounded-2xl mb-6">
+              <Shield className="w-12 h-12 text-gold-400" strokeWidth={1.5} />
+            </div>
+            <h2 className="font-playfair text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
+              Ready to Elevate Your
+              <span className="block gold-shimmer mt-2">Trading Portfolio?</span>
+            </h2>
+            <p className="text-xl text-navy-300 max-w-2xl mx-auto mb-8">
+              Join our exclusive community and gain access to premium trading calls,
+              real-time updates, and proven strategies.
+            </p>
+          </div>
+
+          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
             <button
               onClick={() => router.push('/register')}
-              className="bg-white text-orange-600 px-8 py-4 rounded-lg font-bold text-lg hover:bg-orange-50 transition-colors shadow-lg transform hover:scale-105"
+              className="group px-10 py-5 bg-gold-600 hover:bg-gold-500 text-white rounded-lg font-bold text-lg transition-all shadow-editorial-lg hover:shadow-2xl transform hover:-translate-y-1 flex items-center justify-center gap-3"
             >
-              Register Now
+              <span>Register Now</span>
+              <ArrowUpRight className="w-5 h-5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
             </button>
             <button
               onClick={() => router.push('/login')}
-              className="bg-transparent border-2 border-white text-white px-8 py-4 rounded-lg font-bold text-lg hover:bg-white hover:text-orange-600 transition-colors"
+              className="px-10 py-5 bg-transparent border-2 border-white/30 hover:border-white/50 text-white rounded-lg font-bold text-lg transition-all hover:bg-white/5"
             >
-              Already a Member? Login
+              Member Login
             </button>
           </div>
-          <p className="text-sm text-orange-100 mt-6">
-            Join our community of successful traders today!
+
+          <p className="text-sm text-navy-400">
+            Trusted by traders across India • Transparent reporting • Educational focus
           </p>
         </div>
+      </section>
 
-        {/* Features Section */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 text-center">
-            <div className="bg-blue-100 dark:bg-blue-900/50 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-              <TrendingUp className="w-8 h-8 text-blue-600 dark:text-blue-400" />
+      {/* Features Section - Three Column */}
+      <section className="py-20 bg-gradient-to-br from-white to-navy-50 dark:from-navy-900 dark:to-navy-950">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="text-center p-8">
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-navy-100 to-navy-200 dark:from-navy-800 dark:to-navy-700 rounded-2xl mb-6 shadow-editorial">
+                <BarChart3 className="w-8 h-8 text-navy-900 dark:text-gold-400" strokeWidth={2} />
+              </div>
+              <h3 className="font-playfair text-2xl font-bold text-navy-950 dark:text-white mb-3">
+                Technical Precision
+              </h3>
+              <p className="text-navy-600 dark:text-navy-300 leading-relaxed">
+                Every call is backed by rigorous chart analysis, volume confirmation,
+                and risk management protocols.
+              </p>
             </div>
-            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
-              Professional Analysis
-            </h3>
-            <p className="text-gray-600 dark:text-gray-300">
-              Expert technical analysis with clear entry and exit points
-            </p>
-          </div>
 
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 text-center">
-            <div className="bg-green-100 dark:bg-green-900/50 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-              <Award className="w-8 h-8 text-green-600 dark:text-green-400" />
+            <div className="text-center p-8">
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-emerald-100 to-emerald-200 dark:from-emerald-900/30 dark:to-emerald-800/30 rounded-2xl mb-6 shadow-editorial">
+                <Award className="w-8 h-8 text-emerald-700 dark:text-emerald-500" strokeWidth={2} />
+              </div>
+              <h3 className="font-playfair text-2xl font-bold text-navy-950 dark:text-white mb-3">
+                Proven Track Record
+              </h3>
+              <p className="text-navy-600 dark:text-navy-300 leading-relaxed">
+                Transparent performance tracking with verified results.
+                See exactly how each call performs over time.
+              </p>
             </div>
-            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
-              Proven Track Record
-            </h3>
-            <p className="text-gray-600 dark:text-gray-300">
-              Consistent results with transparent performance tracking
-            </p>
-          </div>
 
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 text-center">
-            <div className="bg-purple-100 dark:bg-purple-900/50 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-              <Calendar className="w-8 h-8 text-purple-600 dark:text-purple-400" />
+            <div className="text-center p-8">
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-gold-100 to-gold-200 dark:from-gold-900/30 dark:to-gold-800/30 rounded-2xl mb-6 shadow-editorial">
+                <Clock className="w-8 h-8 text-gold-700 dark:text-gold-400" strokeWidth={2} />
+              </div>
+              <h3 className="font-playfair text-2xl font-bold text-navy-950 dark:text-white mb-3">
+                Real-Time Updates
+              </h3>
+              <p className="text-navy-600 dark:text-navy-300 leading-relaxed">
+                Automated price tracking with instant notifications when targets are hit or stop losses triggered.
+              </p>
             </div>
-            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
-              Daily Updates
-            </h3>
-            <p className="text-gray-600 dark:text-gray-300">
-              Real-time price tracking and automatic target monitoring
-            </p>
           </div>
         </div>
+      </section>
 
-        {/* Disclaimer Section */}
-        <div className="max-w-7xl mx-auto px-4 mt-12">
-          <Disclaimer />
-        </div>
+      {/* Disclaimer */}
+      <div className="max-w-7xl mx-auto px-6 py-12">
+        <Disclaimer />
       </div>
 
-      {/* Footer */}
-      <footer className="bg-gradient-to-r from-slate-800 via-slate-900 to-slate-800 text-white py-8 mt-16">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+      {/* Premium Footer */}
+      <footer className="relative grain-texture bg-navy-950 dark:bg-black text-white py-12 border-t border-gold-600/20">
+        <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-gold-400 to-transparent"></div>
+
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="text-center md:text-left">
-              <p className="text-slate-300 text-sm">
+              <div className="flex items-center gap-3 mb-2 justify-center md:justify-start">
+                <TrendingUp className="w-6 h-6 text-gold-400" strokeWidth={2.5} />
+                <span className="font-playfair text-lg font-bold">Swing Trader Sagar</span>
+              </div>
+              <p className="text-sm text-navy-400">
                 © 2025 Swing Trader Sagar. All rights reserved.
               </p>
             </div>
 
             <div className="flex items-center gap-2 text-sm">
-              <span className="text-slate-400">Designed & Developed by</span>
-              <span className="font-semibold bg-gradient-to-r from-blue-400 to-emerald-400 bg-clip-text text-transparent">
+              <span className="text-navy-400">Designed & Developed by</span>
+              <span className="font-semibold gold-shimmer">
                 Shrinidhi Katti
               </span>
             </div>
