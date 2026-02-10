@@ -14,6 +14,20 @@ export async function GET(request: NextRequest) {
       )
     }
 
+    // Auto-deactivate users with expired subscriptions
+    const now = new Date()
+    await prisma.user.updateMany({
+      where: {
+        subscriptionEnd: {
+          lt: now,
+        },
+        isActive: true, // Only update if they're currently active
+      },
+      data: {
+        isActive: false,
+      },
+    })
+
     const users = await prisma.user.findMany({
       orderBy: [
         { status: 'asc' }, // PENDING first

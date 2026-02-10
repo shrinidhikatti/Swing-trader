@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth'
+import { prisma } from '@/lib/prisma'
 
 export async function GET() {
   try {
@@ -9,6 +10,22 @@ export async function GET() {
       return NextResponse.json({
         authenticated: false,
         user: null,
+      })
+    }
+
+    // Auto-deactivate users with expired subscriptions (only for admin sessions)
+    if (session.isAdmin) {
+      const now = new Date()
+      await prisma.user.updateMany({
+        where: {
+          subscriptionEnd: {
+            lt: now,
+          },
+          isActive: true, // Only update if they're currently active
+        },
+        data: {
+          isActive: false,
+        },
       })
     }
 
