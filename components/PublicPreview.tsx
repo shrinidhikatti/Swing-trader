@@ -552,12 +552,18 @@ export default function PublicPreview({ calls }: PublicPreviewProps) {
             {/* Credits */}
             <div className="flex items-center gap-2 text-sm">
               <span className="text-gray-400">Designed & Developed by</span>
-              <span className="font-bold bg-gradient-to-r from-amber-400 via-amber-300 to-orange-400 bg-clip-text text-transparent" style={{
-                fontFamily: 'system-ui, -apple-system, sans-serif',
-                letterSpacing: '-0.01em'
-              }}>
+              <a
+                href="https://www.prashanvitech.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-bold bg-gradient-to-r from-amber-400 via-amber-300 to-orange-400 bg-clip-text text-transparent hover:from-amber-300 hover:via-amber-200 hover:to-orange-300 transition-all duration-300 cursor-pointer"
+                style={{
+                  fontFamily: 'system-ui, -apple-system, sans-serif',
+                  letterSpacing: '-0.01em'
+                }}
+              >
                 Shrinidhi Katti
-              </span>
+              </a>
             </div>
           </div>
 
