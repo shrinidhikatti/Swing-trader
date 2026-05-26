@@ -1,10 +1,8 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 
-/**
- * PUBLIC API endpoint to fetch limited successful trading calls for landing page preview
- * Shows 4-5 target hit calls to attract new users
- */
+export const dynamic = 'force-dynamic'
+
 export async function GET() {
   try {
     // Only show calls that are not scheduled for the future
