@@ -1015,7 +1015,7 @@ export default function Home() {
                 rel="noopener noreferrer"
                 className="font-semibold bg-gradient-to-r from-blue-400 to-emerald-400 bg-clip-text text-transparent hover:from-blue-300 hover:to-emerald-300 transition-all duration-300 cursor-pointer"
               >
-                Shrinidhi Katti
+                PrashanviTech
               </a>
             </div>
           </div>

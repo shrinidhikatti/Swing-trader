@@ -562,7 +562,7 @@ export default function PublicPreview({ calls }: PublicPreviewProps) {
                   letterSpacing: '-0.01em'
                 }}
               >
-                Shrinidhi Katti
+                PrashanviTech
               </a>
             </div>
           </div>

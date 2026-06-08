@@ -279,9 +279,14 @@ export default function DatabaseViewer() {
               </div>
               <div className="flex items-center gap-2 text-sm">
                 <span className="text-slate-400">Designed & Developed by</span>
-                <span className="font-semibold bg-gradient-to-r from-blue-400 to-emerald-400 bg-clip-text text-transparent">
-                  Shrinidhi Katti
-                </span>
+                <a
+                  href="https://www.prashanvitech.com/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-semibold bg-gradient-to-r from-blue-400 to-emerald-400 bg-clip-text text-transparent hover:from-blue-300 hover:to-emerald-300 transition-all duration-300"
+                >
+                  PrashanviTech
+                </a>
               </div>
             </div>
           </div>
